@@ -1,22 +1,47 @@
 <resources>
-    <!-- LOGIN -->
     <string name="app_name">AppLugaresProyectoFinal</string>
+
+    <!-- AUTH -->
+    <string name="btn_login">Iniciar Sesión</string>
+    <string name="btn_register">Registarse</string>
+
+    <string name="title_header_auth">Empieza ahora</string>
+    <string name="txt_header_auth">Regístrate o inicia sesión y descubre todo lo que ofrece nuestra app</string>
+
+    <!-- LOGIN -->
     <string name="label_email">Correo electrónico</string>
     <string name="label_password">Contraseña</string>
-    <string name="btn_login">Iniciar Sesión</string>
+    <string name="label_remember_session">Recordar</string>
+
     <string name="alt_logo_img">Logo</string>
+    <string name="link_login_forgot_password">¿Has olvidado tu contraseña?</string>
+
     <string name="error_email">Email no válido</string>
     <string name="error_password">Contraseña no puede ser menor a 5 caracteres</string>
-    <string name="btn_register">Registrarse</string>
-    <string name="btn_create_account">Crear cuenta</string>
 
     <!-- REGISTRO -->
-    <string name="placeholder_select_city">Seleccione la ciudad</string>
-    <string name="placeholder_select_country">Seleccione el país</string>
+    <string name="label_register_city">Seleccione la ciudad</string>
+    <string name="label_register_country">Seleccione el país</string>
+    <string name="label_name">Nombre</string>
+    <string name="label_phonenumber">Numero de teléfono</string>
+    <string name="label_confirm_password">Confirmar contraseña</string>
+
+    <string name="error_name">El nombre es obligatorio</string>
+    <string name="error_phonenumber">El teléfono es obligatorio</string>
+    <string name="error_confirm_password">Las contraseñas no coinciden</string>
+    <string name="error_city">La ciudad es obligatoria</string>
+    <string name="error_country">El país es obligatorio</string>
 
     <!-- TAB LAYOUT -->
-    <string name="title_user">Inicio sesión</string>
-    <string name="menu_favorites">Favoritos</string>
-    <string name="menu_map">Mapa</string>
-    <string name="menu_profile">Perfil</string>
+    <string name="title_logged_user">Inicio sesión</string>
+
+    <string name="label_favorites">Favoritos</string>
+    <string name="label_map">Mapa</string>
+    <string name="label_profile">Perfil</string>
+
+    <!-- PROFILE -->
+
+    <!-- CREATE PLACE -->
+
+
 </resources>

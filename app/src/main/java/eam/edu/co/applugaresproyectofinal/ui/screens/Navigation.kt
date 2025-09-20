@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import eam.edu.co.applugaresproyectofinal.ui.screens.shared.AuthScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.LoginScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RegisterScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.HomeUser
@@ -22,24 +23,13 @@ fun Navigation(){
 
         NavHost(
             navController = navController,
-            startDestination = RouteScreen.Login
+            startDestination = RouteScreen.Auth
 
         ) {
-            composable<RouteScreen.Login> {
-                LoginScreen(
-                    onNavigateToRegister = {
-                        navController.navigate(RouteScreen.Register)
-                    },
+            composable<RouteScreen.Auth>{
+                AuthScreen(
                     onNavigateToHome = {
                         navController.navigate(RouteScreen.Home)
-                    }
-                )
-            }
-
-            composable<RouteScreen.Register> {
-                RegisterScreen(
-                    onNavigateToLogin = {
-                        navController.navigate(RouteScreen.Login)
                     }
                 )
             }

@@ -2,10 +2,12 @@ package eam.edu.co.applugaresproyectofinal.ui.screens.user
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -28,6 +30,18 @@ fun HomeUser() {
     val navController = rememberNavController()
 
     Scaffold(
+        floatingActionButton = {
+            FloatingActionButton (
+                onClick = {
+
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = ""
+                )
+            }
+        },
         topBar = {
             TopBarUser(
                 navController = navController
@@ -55,7 +69,7 @@ fun TopBarUser(
     CenterAlignedTopAppBar(
         title = {
             Text(
-                text = stringResource(R.string.title_user)
+                text = stringResource(R.string.title_logged_user)
             )
         }
     )
@@ -101,7 +115,7 @@ enum class Destination(
     val label: Int,
     val icon: ImageVector,
 ){
-    HOME(route = RouteTab.Map, R.string.menu_map, Icons.Default.Map),
-    FAVORITES(route = RouteTab.Favorites, R.string.menu_favorites, Icons.Default.Favorite),
-    PROFILE(route = RouteTab.Profile, R.string.menu_profile, Icons.Default.AccountCircle)
+    HOME(route = RouteTab.Map, R.string.label_map, Icons.Default.Map),
+    FAVORITES(route = RouteTab.Favorites, R.string.label_favorites, Icons.Default.Favorite),
+    PROFILE(route = RouteTab.Profile, R.string.label_profile, Icons.Default.AccountCircle)
 }
