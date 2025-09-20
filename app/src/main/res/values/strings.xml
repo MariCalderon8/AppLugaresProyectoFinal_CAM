@@ -1,3 +1,22 @@
 <resources>
+    <!-- LOGIN -->
     <string name="app_name">AppLugaresProyectoFinal</string>
+    <string name="label_email">Correo electrónico</string>
+    <string name="label_password">Contraseña</string>
+    <string name="btn_login">Iniciar Sesión</string>
+    <string name="alt_logo_img">Logo</string>
+    <string name="error_email">Email no válido</string>
+    <string name="error_password">Contraseña no puede ser menor a 5 caracteres</string>
+    <string name="btn_register">Registrarse</string>
+    <string name="btn_create_account">Crear cuenta</string>
+
+    <!-- REGISTRO -->
+    <string name="placeholder_select_city">Seleccione la ciudad</string>
+    <string name="placeholder_select_country">Seleccione el país</string>
+
+    <!-- TAB LAYOUT -->
+    <string name="title_user">Inicio sesión</string>
+    <string name="menu_favorites">Favoritos</string>
+    <string name="menu_map">Mapa</string>
+    <string name="menu_profile">Perfil</string>
 </resources>
