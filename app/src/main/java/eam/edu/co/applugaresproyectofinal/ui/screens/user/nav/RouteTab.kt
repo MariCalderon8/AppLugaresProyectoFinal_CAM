@@ -11,4 +11,10 @@ sealed class RouteTab{
 
     @Serializable
     data object Profile: RouteTab()
+
+    @Serializable
+    data object MyPlaces: RouteTab()
+
+    @Serializable
+    data object CreatePlace: RouteTab()
 }

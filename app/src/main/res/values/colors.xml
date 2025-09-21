@@ -11,5 +11,6 @@
     <color name="gray_text">#FF7D7D91</color>
     <color name="light_gray">#CDCDDE</color>
     <color name="blue_link">#4D81E7</color>
+    <color name="red_required">#F83E5A</color>
 
 </resources>

@@ -1,6 +1,9 @@
 package eam.edu.co.applugaresproyectofinal.ui.components
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -20,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import eam.edu.co.applugaresproyectofinal.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,6 +35,7 @@ fun DropdownMenu(
     onValueChange: (String) -> Unit,
     icon: ImageVector ?= null,
     supportingText: String,
+    fontSize: Int = 14,
     textColor: Color = colorResource(R.color.gray_text),
     iconColor: Color = colorResource(R.color.gray_text),
     borderColors: androidx.compose.material3.TextFieldColors = OutlinedTextFieldDefaults.colors(
@@ -43,50 +49,54 @@ fun DropdownMenu(
 
     var isError by rememberSaveable { mutableStateOf(false) }
 
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
-        OutlinedTextField(
-            readOnly = true,
-            value = selectedItem,
-            colors = borderColors,
-            onValueChange = {},
-            label = {
-                Text(
-                    text = label,
-                    color = textColor
-                )
-            },
-            supportingText = {
-                if (isError) {
-                    Text(supportingText)
-                }
-            },
-            leadingIcon = if (icon != null) {
-                {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = label,
-                        tint = iconColor,
-                    )
-                }
-            } else null,
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
-            modifier = Modifier
-                .menuAnchor(MenuAnchorType.PrimaryNotEditable)
-                .fillMaxWidth()
+    Column {
+        Text(
+            text = label,
+            color = textColor,
+            fontSize = fontSize.sp
         )
 
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            list.forEach {
-                DropdownMenuItem(
-                    text = { Text(text = it) },
-                    onClick = {
-                        selectedItem = it
-                        onValueChange(selectedItem)
-                        expanded = false
+        Spacer(modifier = Modifier.height(4.dp))
+
+        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+            OutlinedTextField(
+                readOnly = true,
+                value = selectedItem,
+                colors = borderColors,
+                onValueChange = {},
+                supportingText = {
+                    if (isError) {
+                        Text(supportingText)
                     }
-                )
+                },
+                leadingIcon = if (icon != null) {
+                    {
+                        Icon(
+                            imageVector = icon,
+                            contentDescription = label,
+                            tint = iconColor,
+                        )
+                    }
+                } else null,
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                modifier = Modifier
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                    .fillMaxWidth()
+            )
+
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                list.forEach {
+                    DropdownMenuItem(
+                        text = { Text(text = it) },
+                        onClick = {
+                            selectedItem = it
+                            onValueChange(selectedItem)
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
     }

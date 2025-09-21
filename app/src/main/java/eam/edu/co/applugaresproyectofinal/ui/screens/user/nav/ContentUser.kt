@@ -8,8 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.CreatePlaceScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.FavoritesScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.MapScreen
+import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.MyPlacesScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.ProfileScreen
 
 @Composable
@@ -30,6 +32,16 @@ fun ContentUser(
         }
         composable<RouteTab.Profile> {
             ProfileScreen()
+        }
+        composable<RouteTab.CreatePlace> {
+            CreatePlaceScreen(
+                onNavigateToMyPlaces = {
+                    navController.navigate(RouteTab.MyPlaces)
+                }
+            )
+        }
+        composable<RouteTab.MyPlaces> {
+            MyPlacesScreen()
         }
     }
 }

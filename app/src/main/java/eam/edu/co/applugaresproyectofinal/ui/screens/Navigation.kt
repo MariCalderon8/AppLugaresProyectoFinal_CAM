@@ -9,8 +9,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.AuthScreen
-import eam.edu.co.applugaresproyectofinal.ui.screens.shared.LoginScreen
-import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RegisterScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.HomeUser
 
 @Composable

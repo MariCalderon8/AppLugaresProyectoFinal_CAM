@@ -33,7 +33,7 @@ fun HomeUser() {
         floatingActionButton = {
             FloatingActionButton (
                 onClick = {
-
+                    navController.navigate(RouteTab.CreatePlace)
                 }
             ) {
                 Icon(

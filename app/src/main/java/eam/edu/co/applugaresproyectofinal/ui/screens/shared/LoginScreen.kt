@@ -126,7 +126,7 @@ fun LoginScreen(
                 text = stringResource(R.string.btn_login),
                 isLarge = true,
                 onClick = {
-                    if (email == "juancho@j.com" && password == "12345") {
+                    if (email == "" && password == "") {
                         onNavigateToHome()
                         Toast.makeText(context, "Bienvenido", Toast.LENGTH_SHORT)
                             .show()
