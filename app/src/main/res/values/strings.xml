@@ -42,8 +42,17 @@
     <string name="label_profile">Perfil</string>
 
     <!-- PROFILE -->
+    <string name="btn_edit_profile">Editar perfil</string>
+    <string name="btn_toggle_dark_mode">Modo Oscuro</string>
+    <string name="profile_image">Imagen de perfil del usuario</string>
+    <string name="btn_view_my_places">Ver Mis Lugares</string>
+    <string name="btn_logout">Cerrar Sesión</string>
+    <string name="label_my_places">Mis Lugares</string>
+    <string name="label_settings">Configuración</string>
+    <string name="label_places_created">Lugares Creados</string>
+    <string name="label_favorite_places">Lugares Favoritos</string>
+    <string name="label_received_comments">Comentarios recibidos</string>
 
     <!-- CREATE PLACE -->
-
 
 </resources>
