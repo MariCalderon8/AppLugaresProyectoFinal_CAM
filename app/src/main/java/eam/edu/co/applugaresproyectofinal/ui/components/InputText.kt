@@ -20,6 +20,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import eam.edu.co.applugaresproyectofinal.R
 
 
@@ -33,6 +35,7 @@ fun InputText(
     onValueChange: (String) -> Unit,
     onValidate: (String) -> Boolean,
     icon: ImageVector? = null,
+    fontSize: Int = 14,
     textColor: Color = colorResource(R.color.gray_text),
     iconColor: Color = colorResource(R.color.gray_text),
     borderColors: androidx.compose.material3.TextFieldColors = OutlinedTextFieldDefaults.colors(
@@ -48,7 +51,8 @@ fun InputText(
         label = {
             Text(
                 text = label,
-                color = textColor
+                color = textColor,
+                fontSize = fontSize.sp
             )
         },
         value = value,
@@ -64,15 +68,15 @@ fun InputText(
         } else {
             VisualTransformation.None
         },
-        leadingIcon = {
-            if (icon != null) {
+        leadingIcon = if (icon != null) {
+            {
                 Icon(
                     imageVector = icon,
                     contentDescription = label,
                     tint = iconColor,
                 )
             }
-        },
+        } else null,
         trailingIcon = {
             if (isPassword) {
                 val visibilityIcon =

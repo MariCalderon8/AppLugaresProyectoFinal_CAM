@@ -23,10 +23,12 @@
     <string name="label_register_city">Seleccione la ciudad</string>
     <string name="label_register_country">Seleccione el país</string>
     <string name="label_name">Nombre</string>
+    <string name="label_lastname">Apellido</string>
     <string name="label_phonenumber">Numero de teléfono</string>
     <string name="label_confirm_password">Confirmar contraseña</string>
 
     <string name="error_name">El nombre es obligatorio</string>
+    <string name="error_lastname">El apellido es obligatorio</string>
     <string name="error_phonenumber">El teléfono es obligatorio</string>
     <string name="error_confirm_password">Las contraseñas no coinciden</string>
     <string name="error_city">La ciudad es obligatoria</string>

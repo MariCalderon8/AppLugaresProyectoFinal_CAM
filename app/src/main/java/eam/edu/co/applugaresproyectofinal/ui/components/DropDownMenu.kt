@@ -28,7 +28,7 @@ fun DropdownMenu(
     label: String,
     list: List<String>,
     onValueChange: (String) -> Unit,
-    icon: ImageVector,
+    icon: ImageVector ?= null,
     supportingText: String,
     textColor: Color = colorResource(R.color.gray_text),
     iconColor: Color = colorResource(R.color.gray_text),
@@ -60,13 +60,15 @@ fun DropdownMenu(
                     Text(supportingText)
                 }
             },
-            leadingIcon = {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = label,
-                    tint = iconColor
-                )
-            },
+            leadingIcon = if (icon != null) {
+                {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = label,
+                        tint = iconColor,
+                    )
+                }
+            } else null,
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
