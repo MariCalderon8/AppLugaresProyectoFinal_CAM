@@ -91,13 +91,13 @@ fun ScheduleDialog(onDimiss: () -> Unit) {
             Spacer(Modifier.height(30.dp))
 
             // TimePicker de apertura
-            Text("Hora de apertura", fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.open_hour_txt), fontWeight = FontWeight.SemiBold)
             TimeInput(state = openTimeState)
 
             Spacer(Modifier.height(30.dp))
 
             // TimePicker de cierre
-            Text("Hora de cierre", fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.close_hour_txt), fontWeight = FontWeight.SemiBold)
             TimeInput(state = closeTimeState)
 
             Spacer(Modifier.height(30.dp))
@@ -107,7 +107,7 @@ fun ScheduleDialog(onDimiss: () -> Unit) {
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7A4EE5))
             ) {
-                Text("Agregar horario", color = Color.White)
+                Text(stringResource(R.string.add_schedule), color = Color.White)
             }
         }
     }

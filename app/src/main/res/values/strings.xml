@@ -53,6 +53,10 @@
     <string name="label_favorite_places">Lugares Favoritos</string>
     <string name="label_received_comments">Comentarios recibidos</string>
 
+    <!-- UPDATE PROFILE -->
+    <string name="btn_save_changes">Guardar cambios</string>
+    <string name="title_update_profile">Edita tu perfil</string>
+
     <!-- CREATE PLACE -->
     <string name="label_place_name">Nombre del lugar</string>
     <string name="label_place_description">Descripción</string>
@@ -75,5 +79,8 @@
     <string name="delete_image_txt">Eliminar imagen</string>
     <string name="close_dialog">Cerrar modal</string>
     <string name="select_days">Día(s):</string>
+    <string name="change_profile_pic">Camibar imagen de perfil</string>
+    <string name="close_hour_txt">Hora de cierre</string>
+    <string name="open_hour_txt">Hora de apertura</string>
 
 </resources>

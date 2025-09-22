@@ -31,8 +31,8 @@ import eam.edu.co.applugaresproyectofinal.ui.components.ProfileOptionItem
 
 @Composable
 fun ProfileScreen(
-    onEditProfileClick: () -> Unit = {},
-    onViewMyPlacesClick: () -> Unit = {},
+    onNavigateToUpdateProfile: () -> Unit = {},
+    onNavigateToMyPlaces: () -> Unit = {},
     onToggleDarkModeClick: () -> Unit = {},
     onSignOutClick: () -> Unit = {}
 ) {
@@ -43,7 +43,7 @@ fun ProfileScreen(
             .padding(18.dp)
             .verticalScroll(rememberScrollState()),
     ) {
-        //IMAGEN DE PERFIL PROVICIONAL
+
         Image(
             painter = painterResource(id = R.drawable.avatar),
             contentDescription = stringResource(R.string.profile_image),
@@ -56,7 +56,7 @@ fun ProfileScreen(
 
         ProfileOptionItem(
             text = stringResource(R.string.btn_edit_profile),
-            onClick = { onEditProfileClick() },
+            onClick = { onNavigateToUpdateProfile() },
             cornerRadius = 24,
             fullWidth = false,
             modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -92,7 +92,7 @@ fun ProfileScreen(
             icon = Icons.Filled.LocationOn,
             text = stringResource(R.string.btn_view_my_places),
             fullWidth = true,
-            onClick = { onViewMyPlacesClick() }
+            onClick = { onNavigateToMyPlaces() }
         )
         Spacer(Modifier.height(16.dp))
 
