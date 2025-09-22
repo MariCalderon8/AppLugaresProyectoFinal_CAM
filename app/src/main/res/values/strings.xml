@@ -73,5 +73,7 @@
     <string name="add_images">Agregar imágenes</string>
     <string name="image_text">Imágen del lugar</string>
     <string name="delete_image_txt">Eliminar imagen</string>
+    <string name="close_dialog">Cerrar modal</string>
+    <string name="select_days">Día(s):</string>
 
 </resources>
