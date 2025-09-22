@@ -53,6 +53,10 @@
     <string name="label_favorite_places">Lugares Favoritos</string>
     <string name="label_received_comments">Comentarios recibidos</string>
 
+    <!-- UPDATE PROFILE -->
+    <string name="btn_save_changes">Guardar cambios</string>
+    <string name="title_update_profile">Edita tu perfil</string>
+
     <!-- CREATE PLACE -->
     <string name="label_place_name">Nombre del lugar</string>
     <string name="label_place_description">Descripción</string>
@@ -65,5 +69,6 @@
     <string name="error_description">La descripción es obligatoria</string>
     <string name="btn_create_place">Crear Lugar</string>
     <string name="label_restaurant">Restaurante</string>
+    <string name="change_profile_pic">Camibar imagen de perfil</string>
 
 </resources>

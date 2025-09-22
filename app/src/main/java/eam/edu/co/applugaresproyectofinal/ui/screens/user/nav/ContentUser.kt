@@ -13,6 +13,7 @@ import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.FavoritesScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.MapScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.MyPlacesScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.ProfileScreen
+import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.UpdateProfileScreen
 
 @Composable
 fun ContentUser(
@@ -31,7 +32,14 @@ fun ContentUser(
             FavoritesScreen()
         }
         composable<RouteTab.Profile> {
-            ProfileScreen()
+            ProfileScreen(
+                onNavigateToUpdateProfile = {
+                    navController.navigate(RouteTab.UpdateProfile)
+                },
+                onNavigateToMyPlaces = {
+                    navController.navigate(RouteTab.MyPlaces)
+                }
+            )
         }
         composable<RouteTab.CreatePlace> {
             CreatePlaceScreen(
@@ -42,6 +50,13 @@ fun ContentUser(
         }
         composable<RouteTab.MyPlaces> {
             MyPlacesScreen()
+        }
+        composable<RouteTab.UpdateProfile> {
+            UpdateProfileScreen(
+                onNavitageToProfile = {
+                    navController.navigate(RouteTab.Profile)
+                }
+            )
         }
     }
 }

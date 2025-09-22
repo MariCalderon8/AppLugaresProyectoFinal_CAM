@@ -17,4 +17,7 @@ sealed class RouteTab{
 
     @Serializable
     data object CreatePlace: RouteTab()
+
+    @Serializable
+    data object UpdateProfile: RouteTab()
 }
