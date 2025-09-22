@@ -65,5 +65,15 @@
     <string name="error_description">La descripción es obligatoria</string>
     <string name="btn_create_place">Crear Lugar</string>
     <string name="label_restaurant">Restaurante</string>
+    <string name="name_placeholder">Ej: Café doña Gloria</string>
+    <string name="description_placeholder">Describe tu lugar, trata de incluir los detalles más relevantes de tu negocio</string>
+    <string name="address_placeholder">Ej: Calle 25 # 18-40</string>
+    <string name="phone_placeholder">Ej: 3123456789</string>
+    <string name="add_schedule">Agregar Horario</string>
+    <string name="add_images">Agregar imágenes</string>
+    <string name="image_text">Imágen del lugar</string>
+    <string name="delete_image_txt">Eliminar imagen</string>
+    <string name="close_dialog">Cerrar modal</string>
+    <string name="select_days">Día(s):</string>
 
 </resources>
