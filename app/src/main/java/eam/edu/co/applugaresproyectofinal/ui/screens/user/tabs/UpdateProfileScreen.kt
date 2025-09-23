@@ -74,7 +74,6 @@ fun UpdateProfileScreen(
         var name by remember { mutableStateOf("Pepito") } // Datos de usuario quemados de ejemplo
         var lastname by remember { mutableStateOf("Perez") }
         var phoneNumber by remember { mutableStateOf("2345678") }
-        var email by remember { mutableStateOf("pepito@perez.com") }
 
         Text(
             text = stringResource(R.string.title_update_profile),
@@ -152,20 +151,6 @@ fun UpdateProfileScreen(
             )
         }
 
-        InputText(
-            value = email,
-            label = stringResource(R.string.label_email),
-            supportingText = stringResource(R.string.error_email),
-            onValueChange = {
-                email = it
-            },
-            onValidate = {
-                email.isBlank() || Patterns.EMAIL_ADDRESS.matcher(email).matches()
-            },
-            icon = Icons.Outlined.Email,
-            modifier = Modifier
-        )
-
         DropdownMenu(
             label = stringResource(R.string.label_register_country),
             list = countries,
@@ -208,7 +193,7 @@ fun UpdateProfileScreen(
             isLarge = true
         )
 
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.height(20.dp))
     }
 
 }

@@ -41,12 +41,14 @@ fun HomeUser() {
                     contentDescription = ""
                 )
             }
-        },
-        topBar = {
-            TopBarUser(
-                navController = navController
-            )
-        },
+        }
+        ,
+//        topBar = {
+//            TopBarUser(
+//                navController = navController
+//            )
+//        }
+//        ,
         bottomBar = {
             BottomBarUser(
                 navController = navController

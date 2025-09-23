@@ -65,7 +65,10 @@ fun AuthScreen(
         }
 
         Row(
-            modifier = Modifier.background(colorResource(R.color.gray))
+            modifier = Modifier.background(
+                color = colorResource(R.color.gray),
+                shape = RoundedCornerShape(6.dp)
+            )
                 .padding(6.dp)
             ,
             horizontalArrangement = Arrangement.spacedBy(2.dp)

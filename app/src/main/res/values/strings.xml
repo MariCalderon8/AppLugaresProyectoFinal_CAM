@@ -82,5 +82,6 @@
     <string name="change_profile_pic">Camibar imagen de perfil</string>
     <string name="close_hour_txt">Hora de cierre</string>
     <string name="open_hour_txt">Hora de apertura</string>
+    <string name="title_create_place">Crear lugar</string>
 
 </resources>

@@ -45,6 +45,9 @@ fun ContentUser(
             CreatePlaceScreen(
                 onNavigateToMyPlaces = {
                     navController.navigate(RouteTab.MyPlaces)
+                },
+                goBack = {
+                    navController.popBackStack()
                 }
             )
         }
