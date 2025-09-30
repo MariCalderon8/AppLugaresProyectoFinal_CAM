@@ -76,4 +76,10 @@
     <string name="close_dialog">Cerrar modal</string>
     <string name="select_days">Día(s):</string>
 
+    <string name="label_search_place">Buscar lugares</string>
+    <string name="label_filter">Filtro</string>
+    <string name="label_search">Buscar</string>
+    <string name="label_create_place">Crear lugar</string>
+    <string name="label_back">Volver atrás</string>
+
 </resources>
