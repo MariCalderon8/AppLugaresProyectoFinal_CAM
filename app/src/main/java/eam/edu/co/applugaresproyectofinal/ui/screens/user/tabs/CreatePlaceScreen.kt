@@ -156,8 +156,8 @@ fun CreatePlaceScreen(
                         },
                         shape = RoundedCornerShape(50),
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Color(0xFF6A1B9A), // morado cuando está seleccionado
-                            containerColor = Color.White,               // blanco cuando no
+                            selectedContainerColor = Color(0xFF6A1B9A),
+                            containerColor = Color.White,
                             selectedLabelColor = Color.White,
                             selectedLeadingIconColor = Color.White,
                             labelColor = Color.Black,

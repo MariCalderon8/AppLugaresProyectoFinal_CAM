@@ -48,7 +48,8 @@ import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
 
 @Composable
 fun LoginScreen(
-    onNavigateToHome: () -> Unit
+    onNavigateToHome: () -> Unit,
+    onNavigateToRecoverPasswordEmail: () -> Unit
 ) {
     var email by remember { mutableStateOf("") } // Estado mutable
     var password by remember { mutableStateOf("") } // Estado mutable
@@ -114,7 +115,7 @@ fun LoginScreen(
                     textDecoration = TextDecoration.Underline,
                     fontSize = 13.sp,
                     modifier = Modifier.clickable {
-                        Log.d("Login", "Recover password clicked")
+                        onNavigateToRecoverPasswordEmail()
                     }
                 )
 
