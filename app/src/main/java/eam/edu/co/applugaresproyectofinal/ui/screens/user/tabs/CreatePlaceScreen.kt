@@ -76,11 +76,11 @@ fun CreatePlaceScreen(
     var phoneNumber by remember { mutableStateOf("") }
 
     val categories = listOf(
-        Category("Restaurante", Icons.Outlined.Restaurant),
-        Category("Hotel", Icons.Outlined.Store),
-        Category("Museo", Icons.Outlined.Museum),
-        Category("Cafetería", Icons.Outlined.LocalCafe),
-        Category("Comida rápida", Icons.Outlined.Fastfood)
+        Category.RESTAURANT,
+        Category.HOTEL,
+        Category.MUSEUM,
+        Category.CAFETERIA,
+        Category.FAST_FOOD
     )
 
     var selectedCategory by remember { mutableStateOf<String?>(null) }

@@ -46,9 +46,9 @@ fun ContentUser(
                 onNavigateToMyPlaces = {
                     navController.navigate(RouteTab.MyPlaces)
                 },
-                goBack = {
-                    navController.popBackStack()
-                }
+//                goBack = {
+//                    navController.popBackStack()
+//                }
             )
         }
         composable<RouteTab.MyPlaces> {
