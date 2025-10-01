@@ -84,4 +84,20 @@
     <string name="open_hour_txt">Hora de apertura</string>
     <string name="title_create_place">Crear lugar</string>
 
+    <string name="label_search_place">Buscar lugares</string>
+    <string name="label_filter">Filtro</string>
+    <string name="label_search">Buscar</string>
+    <string name="label_create_place">Crear lugar</string>
+    <string name="label_back">Volver atrás</string>
+    <string name="title_recover_password_code">Recuperar contraseña</string>
+    <string name="subtitle_recover_password_code">Ingresa el código que enviamos a tu correo</string>
+    <string name="label_code">Código</string>
+    <string name="support_code">Ingresa el código recibido</string>
+    <string name="btn_continue">Continuar</string>
+    <string name="title_recover_password_email">Ingresa tu correo</string>
+    <string name="subtitle_recover_password_email">Ingresa el correo para restablecer tu contraseña</string>
+    <string name="title_recover_password_new_password">Nueva contraseña</string>
+    <string name="password_restore">Cambiar contraseña</string>
+    <string name="subtitle_recover_password_new_password">Ingrese una nueva contraseña</string>
+
 </resources>

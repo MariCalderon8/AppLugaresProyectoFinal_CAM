@@ -1,5 +1,6 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user
 
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
@@ -11,10 +12,12 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
@@ -34,11 +37,14 @@ fun HomeUser() {
             FloatingActionButton (
                 onClick = {
                     navController.navigate(RouteTab.CreatePlace)
-                }
+                },
+                shape = CircleShape,
+                containerColor = Color(0xFF6A1B9A)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = ""
+                    contentDescription = stringResource(R.string.label_create_place),
+                    tint = Color.White,
                 )
             }
         }
@@ -68,15 +74,27 @@ fun HomeUser() {
 fun TopBarUser(
     navController: NavHostController
 ) {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                text = stringResource(R.string.title_logged_user)
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    when (currentRoute) {
+        RouteTab.Map::class.qualifiedName -> {}
+        RouteTab.Favorites::class.qualifiedName -> {
+            CenterAlignedTopAppBar(
+                title = { Text(text = stringResource(R.string.label_favorites)) }
             )
         }
-    )
-}
 
+        RouteTab.Profile::class.qualifiedName -> {
+            CenterAlignedTopAppBar(
+                title = { Text(text = stringResource(R.string.label_profile)) }
+            )
+        }
+
+        else -> {}
+    }
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomBarUser(
@@ -103,7 +121,14 @@ fun BottomBarUser(
                         contentDescription = stringResource(destination.label)
                     )
                 },
-                selected = isSelected
+                selected = isSelected,
+                colors = NavigationBarItemDefaults.colors(
+                    selectedIconColor = Color.Gray,
+                    selectedTextColor = Color.Gray,
+                    indicatorColor = Color(0xFFD1C4E9),
+                    unselectedIconColor = Color.Gray,
+                    unselectedTextColor = Color.Gray
+                )
             )
         }
 

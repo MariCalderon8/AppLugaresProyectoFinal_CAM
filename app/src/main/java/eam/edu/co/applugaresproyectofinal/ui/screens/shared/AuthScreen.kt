@@ -32,7 +32,8 @@ import eam.edu.co.applugaresproyectofinal.R
 
 @Composable
 fun AuthScreen(
-    onNavigateToHome: () -> Unit
+    onNavigateToHome: () -> Unit,
+    onNavigateToRecoverPasswordEmail: () -> Unit
 ){
 
     var showLogin by remember{ mutableStateOf(true) }
@@ -111,18 +112,14 @@ fun AuthScreen(
                 )
             }
         }
-
-        if(showLogin){
+        if (showLogin) {
             LoginScreen(
-                onNavigateToHome = {
-                    onNavigateToHome()
-                }
+                onNavigateToHome = { onNavigateToHome() },
+                onNavigateToRecoverPasswordEmail = { onNavigateToRecoverPasswordEmail() } // 👈 pasamos el nuevo callback
             )
-        }else{
-            RegisterScreen {  }
+        } else {
+            RegisterScreen { }
         }
-
-
     }
 
 }
