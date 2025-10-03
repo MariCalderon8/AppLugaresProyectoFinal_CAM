@@ -103,4 +103,44 @@
     <string name="label_no_results">No hay lugares</string>
     <string name="label_no_results_description">No se encontraron lugares con el filtro seleccionado</string>
 
+    <!-- NEW COMMENT -->
+    <string name="title_new_comment">Nuevo comentario</string>
+    <string name="subtitle_new_comment">Tu opinión es muy valiosa. Al calificar y dejar un comentario sobre este lugar, estás ayudando a otros a tomar decisiones informadas y a descubrir nuevos espacios que valen la pena. ¡Cada experiencia cuenta!</string>
+    <string name="label_comment_subject">Asunto</string>
+    <string name="placeholder_comment_subject">Ej: Excelente</string>
+    <string name="label_comment_description">Descripción*</string>
+    <string name="placeholder_comment_description">Escribe tu experiencia...</string>
+    <string name="label_comment_rating">Calificación</string>
+    <string name="btn_submit_comment">Enviar comentario</string>
+
+    <!-- NEW REPORT -->
+    <string name="title_new_report">Nuevo reporte</string>
+    <string name="label_report_subject">Asunto</string>
+    <string name="placeholder_report_subject">Ej: Dirección equivocada</string>
+    <string name="label_report_description">Descripción*</string>
+    <string name="placeholder_report_description">Describe lo más detallado posible el inconveniente...</string>
+    <string name="btn_submit_report">Enviar reporte</string>
+    <string name="info_report_text">
+    Gracias por tomarte el tiempo de reportar este lugar.
+    Todos los reportes son revisados cuidadosamente por nuestro equipo de moderadores para asegurarnos de que cumplen con nuestras políticas.\n\n
+    Tu aporte es fundamental para mantener la calidad de la información y ayudar a otros usuarios a tener una mejor experiencia.\n
+    Si tu reporte es aprobado, se reflejará en la plataforma pronto.\n\n
+    ¡Gracias por ayudarnos a construir una comunidad mejor!
+    </string>
+
+    <!-- PLACE DETAIL -->
+    <string name="label_place_image">Imagen del lugar</string>
+    <string name="label_created_by_me">Creado por mí</string>
+    <string name="sample_place_name">Café Central</string>
+    <string name="sample_place_category">Cafetería</string>
+    <string name="sample_place_description">Un acogedor café en el centro de la ciudad con especialidad en café de origen local y pasteles artesanales</string>
+    <string name="sample_place_address">Calle 10 #15 - 20 Centro</string>
+    <string name="sample_place_phone">+57 3042175890</string>
+    <string name="sample_place_schedule">Lunes - Viernes 7:00 am - 8:00 pm</string>
+    <string name="label_creator_name">Maria Camila Castro</string>
+    <string name="label_creator_username">camilacastro99</string>
+    <string name="label_creator_date">15 de enero del 2025</string>
+    <string name="sample_comment_user">Sebastian</string>
+    <string name="sample_comment_text">Un café con un ambiente encantador, excelente servicio y un sabor inigualable.</string>
+
 </resources>
