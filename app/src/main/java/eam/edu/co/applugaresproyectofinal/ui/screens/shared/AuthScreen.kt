@@ -1,4 +1,4 @@
-package eam.edu.co.applugaresproyectofinal.ui.screens.user
+package eam.edu.co.applugaresproyectofinal.ui.screens.shared
 
 
 import androidx.compose.foundation.background
@@ -28,8 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import eam.edu.co.applugaresproyectofinal.R
-import eam.edu.co.applugaresproyectofinal.ui.screens.shared.LoginScreen
-import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RegisterScreen
+import eam.edu.co.applugaresproyectofinal.ui.screens.user.RegisterScreen
 
 @Composable
 fun AuthScreen(
@@ -76,7 +75,6 @@ fun AuthScreen(
             horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Button(
-                //modifier = if(showLogin) Modifier.background(Color.White) else Modifier.background(colorResource(R.color.gray)),
                 colors = ButtonDefaults.buttonColors(
                     disabledContainerColor = Color.White,
                     disabledContentColor = Color.Black,
@@ -95,7 +93,6 @@ fun AuthScreen(
             }
 
             Button(
-                //modifier = if(!showLogin) Modifier.background(Color.White) else Modifier.background(colorResource(R.color.gray)),
                 colors = ButtonDefaults.buttonColors(
                     disabledContainerColor = Color.White,
                     disabledContentColor = Color.Black,
@@ -116,10 +113,12 @@ fun AuthScreen(
         if (showLogin) {
             LoginScreen(
                 onNavigateToHome = { onNavigateToHome() },
-                onNavigateToRecoverPasswordEmail = { onNavigateToRecoverPasswordEmail() } // 👈 pasamos el nuevo callback
+                onNavigateToRecoverPasswordEmail = { onNavigateToRecoverPasswordEmail() }
             )
         } else {
-            RegisterScreen { }
+            RegisterScreen (
+                onNavigateToLogin = { showLogin = true }
+            )
         }
     }
 

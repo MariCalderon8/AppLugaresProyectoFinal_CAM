@@ -24,6 +24,7 @@ class UsersViewModel: ViewModel() {
                 username = "juanp",
                 email = "juan.perez@example.com",
                 password = "12345",
+                phoneNumber = "12345",
                 city = "Bogotá",
                 profilePicture = null,
                 role = Role.USER,
@@ -35,6 +36,7 @@ class UsersViewModel: ViewModel() {
                 username = "mariag",
                 email = "maria.gomez@example.com",
                 password = "12345",
+                phoneNumber = "12345",
                 city = "Medellín",
                 profilePicture = "https://example.com/maria.jpg",
                 role = Role.ADMIN,
@@ -46,6 +48,7 @@ class UsersViewModel: ViewModel() {
                 username = "carlitos",
                 email = "carlos.lopez@example.com",
                 password = "12345",
+                phoneNumber = "12345",
                 city = "Cali",
                 profilePicture = null,
                 role = Role.USER,
@@ -70,7 +73,7 @@ class UsersViewModel: ViewModel() {
     }
 
     // Login simple (usuario + contraseña)
-    fun login(username: String, password: String): User? {
-        return _users.value.find { it.username == username && it.password == password }
+    fun login(email: String, password: String): User? {
+        return _users.value.find { it.email == email && it.password == password }
     }
 }

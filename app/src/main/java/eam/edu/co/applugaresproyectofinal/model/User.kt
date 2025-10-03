@@ -6,10 +6,11 @@ data class User(
     val id: UUID,
     val name: String,
     val username: String,
+    val phoneNumber: String,
     val email: String,
     val password: String,
     val city: String,
-    val profilePicture: String?,
+    val profilePicture: String? = "",
     val role: Role,
-    val favorites: List<UUID>
+    val favorites: List<UUID>? = emptyList<UUID>()
 )

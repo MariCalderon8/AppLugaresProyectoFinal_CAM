@@ -87,20 +87,6 @@ fun CreatePlaceScreen(
     var schedule by remember { mutableStateOf("") }
 
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        CenterAlignedTopAppBar(
-            title = { Text(text = stringResource(R.string.label_create_place)) },
-            navigationIcon = {
-                IconButton(onClick = { onBack() }) {
-                    Icon(
-                        imageVector = Icons.Outlined.ArrowBack,
-                        contentDescription = stringResource(R.string.label_back)
-                    )
-                }
-            }
-        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
@@ -346,5 +332,5 @@ fun CreatePlaceScreen(
             )
 
         }
-    }
+
 }

@@ -75,13 +75,6 @@ fun UpdateProfileScreen(
         var lastname by remember { mutableStateOf("Perez") }
         var phoneNumber by remember { mutableStateOf("2345678") }
 
-        Text(
-            text = stringResource(R.string.title_update_profile),
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            color = colorResource(R.color.black)
-        )
-
         Spacer(modifier = Modifier.height(20.dp))
 
         Box(

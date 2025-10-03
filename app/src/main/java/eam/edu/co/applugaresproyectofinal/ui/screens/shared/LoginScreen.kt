@@ -45,12 +45,15 @@ import eam.edu.co.applugaresproyectofinal.ui.components.InputText
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.ui.components.CheckBox
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
+import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
 
 @Composable
 fun LoginScreen(
     onNavigateToHome: () -> Unit,
     onNavigateToRecoverPasswordEmail: () -> Unit
 ) {
+    val usersViewModel = LocalMainViewModel.current.usersViewModel
+
     var email by remember { mutableStateOf("") } // Estado mutable
     var password by remember { mutableStateOf("") } // Estado mutable
     val context = LocalContext.current
@@ -127,12 +130,13 @@ fun LoginScreen(
                 text = stringResource(R.string.btn_login),
                 isLarge = true,
                 onClick = {
-                    if (email == "" && password == "") {
+                    val user = usersViewModel.login(email, password)
+                    if (user != null) {
                         onNavigateToHome()
-                        Toast.makeText(context, "Bienvenido", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, context.getString(R.string.usermsg_welcome), Toast.LENGTH_SHORT)
                             .show()
                     } else {
-                        Toast.makeText(context, "Los datos son incorrectos", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, context.getString(R.string.usermsg_not_valid_credentials), Toast.LENGTH_SHORT)
                             .show()
                     }
                 }
