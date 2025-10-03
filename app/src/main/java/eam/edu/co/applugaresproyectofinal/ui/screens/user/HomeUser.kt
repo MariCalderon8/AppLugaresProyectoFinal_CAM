@@ -6,10 +6,12 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -47,8 +49,7 @@ fun HomeUser() {
                     tint = Color.White,
                 )
             }
-        }
-        ,
+        },
         topBar = {
             TopBarUser(
                 navController = navController
@@ -89,6 +90,26 @@ fun TopBarUser(
         RouteTab.Profile::class.qualifiedName -> {
             CenterAlignedTopAppBar(
                 title = { Text(text = stringResource(R.string.label_profile)) }
+            )
+        }
+
+        RouteTab.UpdateProfile::class.qualifiedName -> {
+            CenterAlignedTopAppBar(
+                title = { Text(text = stringResource(R.string.title_update_profile)) }
+            )
+        }
+
+        RouteTab.CreatePlace::class.qualifiedName -> {
+            CenterAlignedTopAppBar(
+                title = { Text(text = stringResource(R.string.label_create_place)) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.Outlined.ArrowBack,
+                            contentDescription = stringResource(R.string.label_back)
+                        )
+                    }
+                }
             )
         }
 
@@ -141,8 +162,10 @@ enum class Destination(
     val route: RouteTab,
     val label: Int,
     val icon: ImageVector,
+    val showFAB: Boolean = true,
+    val showBack: Boolean = false
 ){
     HOME(route = RouteTab.Map, R.string.label_map, Icons.Default.Map),
     FAVORITES(route = RouteTab.Favorites, R.string.label_favorites, Icons.Default.Favorite),
-    PROFILE(route = RouteTab.Profile, R.string.label_profile, Icons.Default.AccountCircle)
+    PROFILE(route = RouteTab.Profile, R.string.label_profile, Icons.Default.AccountCircle),
 }

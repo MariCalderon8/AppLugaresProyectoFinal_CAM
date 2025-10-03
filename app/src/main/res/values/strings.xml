@@ -19,6 +19,9 @@
     <string name="error_email">Email no válido</string>
     <string name="error_password">Contraseña no puede ser menor a 5 caracteres</string>
 
+    <string name="usermsg_welcome">Bienvenido</string>
+    <string name="usermsg_not_valid_credentials">Correo o contraseña no válidos</string>
+
     <!-- REGISTRO -->
     <string name="label_register_city">Seleccione la ciudad</string>
     <string name="label_register_country">Seleccione el país</string>
@@ -26,6 +29,7 @@
     <string name="label_lastname">Apellido</string>
     <string name="label_phonenumber">Numero de teléfono</string>
     <string name="label_confirm_password">Confirmar contraseña</string>
+    <string name="label_username">Nombre de usuario</string>
 
     <string name="error_name">El nombre es obligatorio</string>
     <string name="error_lastname">El apellido es obligatorio</string>
@@ -33,6 +37,10 @@
     <string name="error_confirm_password">Las contraseñas no coinciden</string>
     <string name="error_city">La ciudad es obligatoria</string>
     <string name="error_country">El país es obligatorio</string>
+    <string name="error_usernname">El username es obligatorio</string>
+
+    <string name="usermsg_register_succesfully">Usuario registrado exitosamente</string>
+    <string name="usermsg_not_valid_info">Información no válida</string>
 
     <!-- TAB LAYOUT -->
     <string name="title_logged_user">Inicio sesión</string>
@@ -142,5 +150,6 @@
     <string name="label_creator_date">15 de enero del 2025</string>
     <string name="sample_comment_user">Sebastian</string>
     <string name="sample_comment_text">Un café con un ambiente encantador, excelente servicio y un sabor inigualable.</string>
+
 
 </resources>
