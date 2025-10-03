@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import eam.edu.co.applugaresproyectofinal.ui.screens.shared.AuthScreen
+import eam.edu.co.applugaresproyectofinal.ui.screens.user.AuthScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.HomeUser
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RecoverPasswordEmailScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RecoverPasswordNewPasswordScreen

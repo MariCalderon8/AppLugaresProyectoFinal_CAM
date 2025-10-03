@@ -1,4 +1,4 @@
-package eam.edu.co.applugaresproyectofinal.ui.screens.shared
+package eam.edu.co.applugaresproyectofinal.ui.screens.user
 
 
 import androidx.compose.foundation.background
@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -29,6 +28,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import eam.edu.co.applugaresproyectofinal.R
+import eam.edu.co.applugaresproyectofinal.ui.screens.shared.LoginScreen
+import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RegisterScreen
 
 @Composable
 fun AuthScreen(
