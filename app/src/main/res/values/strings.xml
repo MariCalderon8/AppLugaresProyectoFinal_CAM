@@ -99,5 +99,8 @@
     <string name="title_recover_password_new_password">Nueva contraseña</string>
     <string name="password_restore">Cambiar contraseña</string>
     <string name="subtitle_recover_password_new_password">Ingrese una nueva contraseña</string>
+    <string name="label_moderation">Panel de Moderación</string>
+    <string name="label_no_results">No hay lugares</string>
+    <string name="label_no_results_description">No se encontraron lugares con el filtro seleccionado</string>
 
 </resources>
