@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.ui.test)
     implementation(libs.androidx.foundation.layout)
     implementation(libs.ui)
+    implementation(libs.coil.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

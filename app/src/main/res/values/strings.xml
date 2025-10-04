@@ -157,5 +157,14 @@
     <string name="btn_confirm">Salir</string>
     <string name="btn_cancel">Cancelar</string>
 
+    <!-- CONSTANTS -->
+    <string name="MONDAY">Lunes</string>
+    <string name="TUESDAY">Martes</string>
+    <string name="WEDNESDAY">Miércoles</string>
+    <string name="THURSDAY">Jueves</string>
+    <string name="FRIDAY">Viernes</string>
+    <string name="SATURDAY">Sábado</string>
+    <string name="SUNDAY">Domingo</string>
+
 
 </resources>

@@ -7,36 +7,23 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import eam.edu.co.applugaresproyectofinal.ui.components.PlaceCard
+import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.convertDayToString
 
 @Composable
-fun FavoritesScreen() {
+fun FavoritesScreen(
+    onNavigateToPlaceDetail: (String) -> Unit,
+) {
 
-    val places = listOf(
-        mapOf(
-            "title" to "Café Central",
-            "category" to "Cafetería",
-            "address" to "Calle 10 #15 - 20 Centro",
-            "createdBy" to "Camilutian",
-            "date" to "21/08/2025"
-        ),
-        mapOf(
-            "title" to "Panadería El Trigal",
-            "category" to "Panadería",
-            "address" to "Carrera 5 #12-30",
-            "createdBy" to "María",
-            "date" to "15/09/2025"
-        ),
-        mapOf(
-            "title" to "Restaurante La Terraza",
-            "category" to "Restaurante",
-            "address" to "Av. Siempre Viva #742",
-            "createdBy" to "Andrés",
-            "date" to "30/09/2025"
-        )
-    )
+    val placesViewModel = LocalMainViewModel.current.placesViewModel
+    val usersViewModel = LocalMainViewModel.current.usersViewModel
+    val places = placesViewModel.places.collectAsState()
+    val context = LocalContext.current
 
     LazyColumn(
         contentPadding = PaddingValues(
@@ -44,18 +31,18 @@ fun FavoritesScreen() {
             vertical = 12.dp
         )
     ) {
-        items(places) { place ->
+        items(places.value) { place ->
             PlaceCard(
-                title = place["title"] ?: "",
-                category = place["category"] ?: "",
-                address = place["address"] ?: "",
-                createdBy = place["createdBy"] ?: "",
-                date = place["date"] ?: "",
+                title = place.name,
+                category = place.category.displayName,
+                address = place.description,
+                createdBy = usersViewModel.findUserById(place.createdById)?.name ?: "Desconocido",
+                date = convertDayToString(context, place.schedule.dayOfWeek),
                 icon = Icons.Filled.Favorite,
-                onIconClick = {
-
+                imageUrl = place.images[0],
+                onCardClick = {
+                    onNavigateToPlaceDetail(place.id)
                 }
-
             )
         }
     }

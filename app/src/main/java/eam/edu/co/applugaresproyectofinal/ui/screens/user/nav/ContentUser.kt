@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import eam.edu.co.applugaresproyectofinal.ui.screens.RouteScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.CreatePlaceScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.FavoritesScreen
@@ -32,7 +33,11 @@ fun ContentUser(
             MapScreen()
         }
         composable<RouteTab.Favorites> {
-            FavoritesScreen()
+            FavoritesScreen(
+                onNavigateToPlaceDetail = {
+                    navController.navigate(RouteTab.PlaceDetail(it))
+                }
+            )
         }
         composable<RouteTab.Profile> {
             ProfileScreen(
@@ -70,5 +75,15 @@ fun ContentUser(
                 }
             )
         }
+        composable<RouteTab.PlaceDetail> {
+            val args = it.toRoute<RouteTab.PlaceDetail>()
+            PlaceDetailScreen(
+                placeId = args.placeId,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
     }
 }

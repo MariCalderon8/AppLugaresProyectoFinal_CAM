@@ -15,7 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 
 @Composable
 fun PlaceCard(
@@ -26,9 +28,12 @@ fun PlaceCard(
     date: String,
     modifier: Modifier = Modifier,
     icon: ImageVector,
-    onIconClick: () -> Unit
+    imageUrl: String = "https://validuspharma.com/wp-content/uploads/2019/06/nologo.png",
+    onIconClick: () -> Unit = {},
+    onCardClick: () -> Unit
 ) {
     Card(
+        onClick = onCardClick,
         modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
@@ -44,6 +49,14 @@ fun PlaceCard(
                     .clip(RoundedCornerShape(12.dp))
                     .background(Color(0xFFEDEDED))
             ) {
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0xFFEDEDED))
+                )
                 IconButton(
                     onClick = onIconClick,
                     modifier = Modifier

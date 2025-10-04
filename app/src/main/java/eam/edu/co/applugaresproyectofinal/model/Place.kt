@@ -14,5 +14,6 @@ data class Place(
     val createdById: String,
     val approvedById: String?,
     val status: Status,
-    val reports: List<Report>
+    val reports: List<Report>,
+    val address: String,
 )

@@ -88,5 +88,18 @@ enum class NavigationConfig(
             },
         canLoseChanges = true
     ),
+    PLACE_DETAIL(
+        route = RouteTab.PlaceDetail(""),
+        icon = null,
+        label = null,
+        showBottomBar = true,
+        topBar =
+            { onSafeBack ->
+                AppTopBarCustom(
+                    showBack = true,
+                    onBack = { onSafeBack() }
+                )
+            },
+    ),
 
 }

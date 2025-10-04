@@ -30,45 +30,48 @@ class PlacesViewModel: ViewModel() {
         _places.value = listOf(
             Place(
                 id = UUID.randomUUID().toString(),
-                images = listOf("https://example.com/place1.jpg"),
+                images = listOf("https://dosg.net/wp-content/uploads/2018/03/cafeteria.jpg","https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/51/77/a2/intro-restaurant-plaza.jpg?w=900&h=500&s=1","https://dynamic-media-cdn.tripadvisor.com/media/photo-o/19/68/1b/4e/museo-nacional-de-columbia.jpg?w=900&h=500&s=1"),
                 description = "Un café acogedor en el centro de la ciudad",
                 name = "Café Central",
                 phone = "123-456-789",
-                createdById = UUID.randomUUID().toString(),
+                createdById = "1",
                 approvedById = null,
                 status = Status.APPROVED,
                 schedule = schedule,
                 category = Category.CAFETERIA,
                 reviews = emptyList(),
-                reports = emptyList()
+                reports = emptyList(),
+                address = "Calle 123, Ciudad"
             ),
             Place(
                 id = UUID.randomUUID().toString(),
-                images = listOf("https://example.com/place2.jpg"),
+                images = listOf("https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/51/77/a2/intro-restaurant-plaza.jpg?w=900&h=500&s=1", "https://dosg.net/wp-content/uploads/2018/03/cafeteria.jpg","https://dynamic-media-cdn.tripadvisor.com/media/photo-o/19/68/1b/4e/museo-nacional-de-columbia.jpg?w=900&h=500&s=1"),
                 description = "Un restaurante especializado en comida italiana",
                 name = "Trattoria Roma",
                 phone = "321-654-987",
-                createdById = UUID.randomUUID().toString(),
+                createdById = "1",
                 approvedById = UUID.randomUUID().toString(),
                 status = Status.PENDING_FOR_APPROVAL,
                 schedule = schedule,
-                category = Category.CAFETERIA,
+                category = Category.RESTAURANT,
                 reviews = emptyList(),
-                reports = emptyList()
+                reports = emptyList(),
+                address = "Avenida 456, Ciudad"
             ),
             Place(
                 id = UUID.randomUUID().toString(),
-                images = listOf("https://example.com/place3.jpg"),
-                description = "Un parque recreacional ideal para familias",
-                name = "Parque de la Alegría",
+                images = listOf("https://dynamic-media-cdn.tripadvisor.com/media/photo-o/19/68/1b/4e/museo-nacional-de-columbia.jpg?w=900&h=500&s=1","https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/51/77/a2/intro-restaurant-plaza.jpg?w=900&h=500&s=1","https://dosg.net/wp-content/uploads/2018/03/cafeteria.jpg"),
+                description = "Un museo recreacional ideal para familias",
+                name = "Museo de la Alegría",
                 phone = "111-222-333",
-                createdById = UUID.randomUUID().toString(),
+                createdById = "3",
                 approvedById = null,
                 status = Status.PENDING_FOR_APPROVAL,
                 schedule = schedule,
-                category = Category.CAFETERIA,
+                category = Category.MUSEUM,
                 reviews = emptyList(),
-                reports = emptyList()
+                reports = emptyList(),
+                address = "Calle 789, Ciudad"
             )
         )
     }
