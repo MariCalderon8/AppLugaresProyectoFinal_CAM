@@ -1,17 +1,11 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Map
-import androidx.compose.material.icons.outlined.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -19,153 +13,119 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.nav.ContentUser
 import eam.edu.co.applugaresproyectofinal.R
+import eam.edu.co.applugaresproyectofinal.ui.components.AlertDialogCustom
+import eam.edu.co.applugaresproyectofinal.ui.screens.user.nav.NavigationConfig
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.nav.RouteTab
 
-
 @Composable
-fun HomeUser() {
+fun HomeUser(
+    onLogout: () -> Unit
+) {
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination =
+        NavigationConfig.entries.find { it.route::class.qualifiedName == navBackStackEntry?.destination?.route }
 
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton (
-                onClick = {
-                    navController.navigate(RouteTab.CreatePlace)
-                },
-                shape = CircleShape,
-                containerColor = Color(0xFF6A1B9A)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.label_create_place),
-                    tint = Color.White,
-                )
-            }
-        },
-        topBar = {
-            TopBarUser(
-                navController = navController
-            )
+    // Estado para controlar el diálogo
+    var showDialog by remember { mutableStateOf(false) }
+
+    fun safeBack() {
+        if (currentDestination?.canLoseChanges == true) {
+            showDialog = true
+        } else {
+            navController.popBackStack()
         }
-        ,
-        bottomBar = {
-            BottomBarUser(
-                navController = navController
-            )
-        },
-    ) { padding ->
-        ContentUser(
-            padding = padding,
-            navController = navController
+    }
+
+
+    // Diálogo de confirmación
+    if (showDialog) {
+        AlertDialogCustom (
+            title = stringResource(R.string.title_lose_changes),
+            text = stringResource(R.string.text_lose_changes),
+            labelButtonConfirm = stringResource(R.string.btn_confirm),
+            labelButtonDismiss = stringResource(R.string.btn_cancel),
+            onDismiss = { showDialog = false },
+            onConfirm = {
+                showDialog = false
+                navController.popBackStack()
+            },
         )
     }
 
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBarUser(
-    navController: NavHostController
-) {
-
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    when (currentRoute) {
-        RouteTab.Map::class.qualifiedName -> {}
-        RouteTab.Favorites::class.qualifiedName -> {
-            CenterAlignedTopAppBar(
-                title = { Text(text = stringResource(R.string.label_favorites)) }
-            )
-        }
-
-        RouteTab.Profile::class.qualifiedName -> {
-            CenterAlignedTopAppBar(
-                title = { Text(text = stringResource(R.string.label_profile)) }
-            )
-        }
-
-        RouteTab.UpdateProfile::class.qualifiedName -> {
-            CenterAlignedTopAppBar(
-                title = { Text(text = stringResource(R.string.title_update_profile)) }
-            )
-        }
-
-        RouteTab.CreatePlace::class.qualifiedName -> {
-            CenterAlignedTopAppBar(
-                title = { Text(text = stringResource(R.string.label_create_place)) },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.Outlined.ArrowBack,
-                            contentDescription = stringResource(R.string.label_back)
-                        )
-                    }
-                }
-            )
-        }
-
-        else -> {}
-    }
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun BottomBarUser(
-    navController: NavHostController
-) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-
-    NavigationBar() {
-        Destination.entries.forEachIndexed { index, destination ->
-            val isSelected = currentDestination?.route == destination.route::class.qualifiedName
-            NavigationBarItem(
-                label = {
-                    Text(
-                        text = stringResource(destination.label)
-                    )
-                },
-                onClick = {
-                    navController.navigate(destination.route)
-                },
-                icon = {
+    Scaffold(
+        floatingActionButton = {
+            if (currentDestination?.showFAB == true) {
+                FloatingActionButton(
+                    onClick = { navController.navigate(RouteTab.CreatePlace) },
+                    shape = CircleShape,
+                    containerColor = Color(0xFF6A1B9A)
+                ) {
                     Icon(
-                        imageVector = destination.icon,
-                        contentDescription = stringResource(destination.label)
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(R.string.label_create_place),
+                        tint = Color.White,
                     )
-                },
-                selected = isSelected,
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color.Gray,
-                    selectedTextColor = Color.Gray,
-                    indicatorColor = Color(0xFFD1C4E9),
-                    unselectedIconColor = Color.Gray,
-                    unselectedTextColor = Color.Gray
-                )
-            )
+                }
+            }
+        },
+        topBar = {
+            currentDestination?.topBar?.invoke(::safeBack)
+        },
+        bottomBar = {
+            if (currentDestination?.showBottomBar == true) {
+                NavigationBar {
+                    NavigationConfig.entries
+                        .filter { it.showInBottomMenu }
+                        .forEach { destination ->
+                            val isSelected = currentDestination?.route == destination.route
+
+                            NavigationBarItem(
+                                selected = isSelected,
+                                onClick = { navController.navigate(destination.route) },
+                                icon = {
+                                    if (destination.icon != null && destination.label != null) {
+                                        Icon(
+                                            imageVector = destination.icon,
+                                            contentDescription = stringResource(destination.label)
+                                        )
+                                    }
+                                },
+                                label = {
+                                    if (destination.label != null) {
+                                        Text(
+                                            text = stringResource(destination.label)
+                                        )
+                                    }
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = Color.Gray,
+                                    selectedTextColor = Color.Gray,
+                                    indicatorColor = Color(0xFFD1C4E9),
+                                    unselectedIconColor = Color.Gray,
+                                    unselectedTextColor = Color.Gray
+                                )
+                            )
+                        }
+                }
+            }
         }
-
-
+    ) { padding ->
+        ContentUser(
+            padding = padding,
+            navController = navController,
+            onLogout = { onLogout() }
+        )
     }
 
-}
 
-enum class Destination(
-    val route: RouteTab,
-    val label: Int,
-    val icon: ImageVector,
-    val showFAB: Boolean = true,
-    val showBack: Boolean = false
-){
-    HOME(route = RouteTab.Map, R.string.label_map, Icons.Default.Map),
-    FAVORITES(route = RouteTab.Favorites, R.string.label_favorites, Icons.Default.Favorite),
-    PROFILE(route = RouteTab.Profile, R.string.label_profile, Icons.Default.AccountCircle),
 }

@@ -2,6 +2,7 @@ package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
 import SignOutButton
 import android.util.Patterns
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -50,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import eam.edu.co.applugaresproyectofinal.R
+import eam.edu.co.applugaresproyectofinal.ui.components.AlertDialogCustom
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
 import eam.edu.co.applugaresproyectofinal.ui.components.DropdownMenu
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
@@ -57,6 +59,7 @@ import eam.edu.co.applugaresproyectofinal.ui.components.InputText
 @Composable
 fun UpdateProfileScreen(
     onNavitageToProfile: () -> Unit = {},
+    onBack: () -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -74,6 +77,27 @@ fun UpdateProfileScreen(
         var name by remember { mutableStateOf("Pepito") } // Datos de usuario quemados de ejemplo
         var lastname by remember { mutableStateOf("Perez") }
         var phoneNumber by remember { mutableStateOf("2345678") }
+
+        var showDialog by remember { mutableStateOf(false) }
+
+        BackHandler(enabled = true) {
+            showDialog = true
+        }
+
+        // Diálogo de confirmación
+        if (showDialog) {
+            AlertDialogCustom (
+                title = stringResource(R.string.title_lose_changes),
+                text = stringResource(R.string.text_lose_changes),
+                labelButtonConfirm = stringResource(R.string.btn_confirm),
+                labelButtonDismiss = stringResource(R.string.btn_cancel),
+                onDismiss = { showDialog = false },
+                onConfirm = {
+                    showDialog = false
+                    onBack()
+                },
+            )
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 

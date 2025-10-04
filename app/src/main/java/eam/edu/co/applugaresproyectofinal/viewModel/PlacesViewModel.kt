@@ -29,12 +29,12 @@ class PlacesViewModel: ViewModel() {
 
         _places.value = listOf(
             Place(
-                id = UUID.randomUUID(),
+                id = UUID.randomUUID().toString(),
                 images = listOf("https://example.com/place1.jpg"),
                 description = "Un café acogedor en el centro de la ciudad",
                 name = "Café Central",
                 phone = "123-456-789",
-                createdById = UUID.randomUUID(),
+                createdById = UUID.randomUUID().toString(),
                 approvedById = null,
                 status = Status.APPROVED,
                 schedule = schedule,
@@ -43,13 +43,13 @@ class PlacesViewModel: ViewModel() {
                 reports = emptyList()
             ),
             Place(
-                id = UUID.randomUUID(),
+                id = UUID.randomUUID().toString(),
                 images = listOf("https://example.com/place2.jpg"),
                 description = "Un restaurante especializado en comida italiana",
                 name = "Trattoria Roma",
                 phone = "321-654-987",
-                createdById = UUID.randomUUID(),
-                approvedById = UUID.randomUUID(),
+                createdById = UUID.randomUUID().toString(),
+                approvedById = UUID.randomUUID().toString(),
                 status = Status.PENDING_FOR_APPROVAL,
                 schedule = schedule,
                 category = Category.CAFETERIA,
@@ -57,12 +57,12 @@ class PlacesViewModel: ViewModel() {
                 reports = emptyList()
             ),
             Place(
-                id = UUID.randomUUID(),
+                id = UUID.randomUUID().toString(),
                 images = listOf("https://example.com/place3.jpg"),
                 description = "Un parque recreacional ideal para familias",
                 name = "Parque de la Alegría",
                 phone = "111-222-333",
-                createdById = UUID.randomUUID(),
+                createdById = UUID.randomUUID().toString(),
                 approvedById = null,
                 status = Status.PENDING_FOR_APPROVAL,
                 schedule = schedule,
@@ -84,12 +84,12 @@ class PlacesViewModel: ViewModel() {
     }
 
     // Eliminar lugar
-    fun deletePlace(id: UUID) {
+    fun deletePlace(id: String) {
         _places.value = _places.value.filterNot { it.id == id }
     }
 
     // Buscar lugar por ID
-    fun findPlaceById(id: UUID): Place? {
+    fun findPlaceById(id: String): Place? {
         return _places.value.find { it.id == id }
     }
 
@@ -99,12 +99,12 @@ class PlacesViewModel: ViewModel() {
     }
 
     // Buscar lugares por id de usuario
-    fun findPlacesByUserId(userId: UUID): List<Place> {
+    fun findPlacesByUserId(userId: String): List<Place> {
         return _places.value.filter { it.createdById == userId }
     }
 
     // Buscar lugares por id de usuario
-    fun findPlacesByUserModerator(userId: UUID): List<Place> {
+    fun findPlacesByUserModerator(userId: String): List<Place> {
         return _places.value.filter { it.approvedById == userId }
     }
 

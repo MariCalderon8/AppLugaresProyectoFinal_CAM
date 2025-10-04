@@ -151,5 +151,11 @@
     <string name="sample_comment_user">Sebastian</string>
     <string name="sample_comment_text">Un café con un ambiente encantador, excelente servicio y un sabor inigualable.</string>
 
+    <!-- LEAVE WITHOUT SAVING ALERT -->
+    <string name="title_lose_changes">¿Salir sin guardar?</string>
+    <string name="text_lose_changes">Perderás los cambios que no hayas guardado.</string>
+    <string name="btn_confirm">Salir</string>
+    <string name="btn_cancel">Cancelar</string>
+
 
 </resources>

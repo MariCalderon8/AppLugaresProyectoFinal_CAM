@@ -20,4 +20,7 @@ sealed class RouteTab{
 
     @Serializable
     data object UpdateProfile: RouteTab()
+
+    @Serializable
+    data class PlaceDetail(val placeId: String): RouteTab()
 }

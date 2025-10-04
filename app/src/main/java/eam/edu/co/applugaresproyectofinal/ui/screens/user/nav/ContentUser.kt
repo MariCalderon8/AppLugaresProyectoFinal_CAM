@@ -8,17 +8,20 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import eam.edu.co.applugaresproyectofinal.ui.screens.RouteScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.CreatePlaceScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.FavoritesScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.MapScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.MyPlacesScreen
+import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.PlaceDetailScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.ProfileScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.UpdateProfileScreen
 
 @Composable
 fun ContentUser(
     padding: PaddingValues,
-    navController: NavHostController
+    navController: NavHostController,
+    onLogout: () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -38,6 +41,9 @@ fun ContentUser(
                 },
                 onNavigateToMyPlaces = {
                     navController.navigate(RouteTab.MyPlaces)
+                },
+                onSignOutClick = {
+                    onLogout()
                 }
             )
         }
@@ -58,6 +64,9 @@ fun ContentUser(
             UpdateProfileScreen(
                 onNavitageToProfile = {
                     navController.navigate(RouteTab.Profile)
+                },
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }

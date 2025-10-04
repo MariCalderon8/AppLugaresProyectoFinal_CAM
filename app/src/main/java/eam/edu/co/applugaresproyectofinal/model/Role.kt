@@ -1,8 +1,8 @@
 package eam.edu.co.applugaresproyectofinal.model
 
 enum class Role (
-    description: String
+    val value: String?
 ){
-    ADMIN("Administrador"),
-    USER("Usuario")
+    ADMIN("ADMIN"),
+    USER("USER")
 }

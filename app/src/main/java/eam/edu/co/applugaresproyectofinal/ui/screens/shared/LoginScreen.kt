@@ -4,6 +4,7 @@ import android.content.pm.ModuleInfo
 import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,13 +44,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
 import eam.edu.co.applugaresproyectofinal.R
+import eam.edu.co.applugaresproyectofinal.model.Role
+import eam.edu.co.applugaresproyectofinal.ui.components.AlertDialogCustom
 import eam.edu.co.applugaresproyectofinal.ui.components.CheckBox
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import java.util.UUID
 
 @Composable
 fun LoginScreen(
-    onNavigateToHome: () -> Unit,
+    onNavigateToHome: (userId: String, role: Role) -> Unit,
     onNavigateToRecoverPasswordEmail: () -> Unit
 ) {
     val usersViewModel = LocalMainViewModel.current.usersViewModel
@@ -132,7 +136,7 @@ fun LoginScreen(
                 onClick = {
                     val user = usersViewModel.login(email, password)
                     if (user != null) {
-                        onNavigateToHome()
+                        onNavigateToHome(user.id, user.role)
                         Toast.makeText(context, context.getString(R.string.usermsg_welcome), Toast.LENGTH_SHORT)
                             .show()
                     } else {

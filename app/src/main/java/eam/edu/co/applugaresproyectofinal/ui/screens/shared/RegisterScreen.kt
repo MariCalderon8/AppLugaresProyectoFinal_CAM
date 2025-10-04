@@ -1,7 +1,6 @@
-package eam.edu.co.applugaresproyectofinal.ui.screens.user
+package eam.edu.co.applugaresproyectofinal.ui.screens.shared
 
 
-import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
@@ -202,7 +201,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
             onClick = {
                 usersViewModel.addUser(
                     User(
-                        id = UUID.randomUUID(),
+                        id = UUID.randomUUID().toString(),
                         name = name + " " + lastname,
                         username = username,
                         phoneNumber = phoneNumber,

@@ -7,14 +7,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import eam.edu.co.applugaresproyectofinal.model.Role
+import eam.edu.co.applugaresproyectofinal.ui.screens.admin.ModerationScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.AuthScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.HomeUser
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RecoverPasswordEmailScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RecoverPasswordNewPasswordScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RecoverPasswordCodeScreen
+import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 import eam.edu.co.applugaresproyectofinal.viewModel.MainViewModel
 
 val LocalMainViewModel = staticCompositionLocalOf<MainViewModel> { error("No MainViewModel provided") }
@@ -22,7 +26,19 @@ val LocalMainViewModel = staticCompositionLocalOf<MainViewModel> { error("No Mai
 fun Navigation(
     mainViewModel: MainViewModel
 ){
+    val context = LocalContext.current
     val navController = rememberNavController()
+    val user = SharedPrefsUtil.getPreferences(context)
+
+    var startDestination = if (user.isEmpty()){
+        RouteScreen.Auth
+    }else{
+        if(user["role"] == Role.ADMIN.value){
+            RouteScreen.HomeAdmin
+        }else{
+            RouteScreen.HomeUser
+        }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -33,13 +49,19 @@ fun Navigation(
         ) {
             NavHost(
                 navController = navController,
-                startDestination = RouteScreen.Auth
+                startDestination = startDestination
 
             ) {
                 composable<RouteScreen.Auth> {
                     AuthScreen(
-                        onNavigateToHome = {
-                            navController.navigate(RouteScreen.Home)
+                        onNavigateToHome = { userId, role ->
+                            SharedPrefsUtil.savePreferences(context, userId, role)
+                            if(role == Role.ADMIN){
+                                navController.navigate(RouteScreen.HomeAdmin)
+                            }else{
+                                navController.navigate(RouteScreen.HomeUser)
+
+                            }
                         },
                         onNavigateToRecoverPasswordEmail = {
                             navController.navigate(RouteScreen.RecoverPasswordEmail)
@@ -47,8 +69,23 @@ fun Navigation(
                     )
                 }
 
-                composable<RouteScreen.Home> {
-                    HomeUser()
+                composable<RouteScreen.HomeUser> {
+                    HomeUser(
+                        onLogout = {
+                            SharedPrefsUtil.clearPreferences(context)
+                            navController.navigate(RouteScreen.Auth)
+                        }
+                    )
+                }
+
+                composable<RouteScreen.HomeAdmin> {
+                    ModerationScreen(
+                        onLogout = {
+                            SharedPrefsUtil.clearPreferences(context)
+                            navController.navigate(RouteScreen.Auth)
+                        },
+                        navController = navController
+                    )
                 }
 
                 composable<RouteScreen.RecoverPasswordEmail> {

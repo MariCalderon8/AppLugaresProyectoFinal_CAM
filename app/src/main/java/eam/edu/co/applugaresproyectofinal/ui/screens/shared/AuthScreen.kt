@@ -1,6 +1,7 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.shared
 
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,14 +29,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import eam.edu.co.applugaresproyectofinal.R
-import eam.edu.co.applugaresproyectofinal.ui.screens.user.RegisterScreen
+import eam.edu.co.applugaresproyectofinal.model.Role
 
 @Composable
 fun AuthScreen(
-    onNavigateToHome: () -> Unit,
+    onNavigateToHome: (userId: String, role: Role) -> Unit,
     onNavigateToRecoverPasswordEmail: () -> Unit
 ){
 
+    BackHandler(enabled = true) {}
     var showLogin by remember{ mutableStateOf(true) }
 
     Column (
@@ -66,10 +68,11 @@ fun AuthScreen(
         }
 
         Row(
-            modifier = Modifier.background(
-                color = colorResource(R.color.gray),
-                shape = RoundedCornerShape(6.dp)
-            )
+            modifier = Modifier
+                .background(
+                    color = colorResource(R.color.gray),
+                    shape = RoundedCornerShape(6.dp)
+                )
                 .padding(6.dp)
             ,
             horizontalArrangement = Arrangement.spacedBy(2.dp)
@@ -112,7 +115,9 @@ fun AuthScreen(
         }
         if (showLogin) {
             LoginScreen(
-                onNavigateToHome = { onNavigateToHome() },
+                onNavigateToHome = { userId, role ->
+                    onNavigateToHome(userId, role)
+                },
                 onNavigateToRecoverPasswordEmail = { onNavigateToRecoverPasswordEmail() }
             )
         } else {

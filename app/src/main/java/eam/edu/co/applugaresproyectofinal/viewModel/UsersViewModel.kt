@@ -19,10 +19,10 @@ class UsersViewModel: ViewModel() {
     private fun loadUsers() {
         _users.value = listOf(
             User(
-                id = UUID.randomUUID(),
+                id = "1",
                 name = "Juan Pérez",
                 username = "juanp",
-                email = "juan.perez@example.com",
+                email = "user@example.com",
                 password = "12345",
                 phoneNumber = "12345",
                 city = "Bogotá",
@@ -31,19 +31,19 @@ class UsersViewModel: ViewModel() {
                 favorites = emptyList()
             ),
             User(
-                id = UUID.randomUUID(),
+                id = "2",
                 name = "María Gómez",
                 username = "mariag",
-                email = "maria.gomez@example.com",
+                email = "admin@example.com",
                 password = "12345",
                 phoneNumber = "12345",
                 city = "Medellín",
                 profilePicture = "https://example.com/maria.jpg",
                 role = Role.ADMIN,
-                favorites = listOf(UUID.randomUUID(), UUID.randomUUID())
+                favorites = emptyList()
             ),
             User(
-                id = UUID.randomUUID(),
+                id = "3",
                 name = "Carlos López",
                 username = "carlitos",
                 email = "carlos.lopez@example.com",
@@ -52,7 +52,7 @@ class UsersViewModel: ViewModel() {
                 city = "Cali",
                 profilePicture = null,
                 role = Role.USER,
-                favorites = listOf(UUID.randomUUID())
+                favorites = emptyList()
             )
         )
     }
@@ -68,7 +68,7 @@ class UsersViewModel: ViewModel() {
     }
 
     // Buscar usuario por ID
-    fun findUserById(id: UUID): User? {
+    fun findUserById(id: String): User? {
         return _users.value.find { it.id == id }
     }
 

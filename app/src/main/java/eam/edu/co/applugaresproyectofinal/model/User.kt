@@ -3,7 +3,7 @@ package eam.edu.co.applugaresproyectofinal.model
 import java.util.UUID
 
 data class User(
-    val id: UUID,
+    val id: String,
     val name: String,
     val username: String,
     val phoneNumber: String,
@@ -12,5 +12,5 @@ data class User(
     val city: String,
     val profilePicture: String? = "",
     val role: Role,
-    val favorites: List<UUID>? = emptyList<UUID>()
+    val favorites: List<String>? = emptyList<String>()
 )

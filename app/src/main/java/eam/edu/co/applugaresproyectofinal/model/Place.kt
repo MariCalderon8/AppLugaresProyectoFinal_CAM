@@ -3,7 +3,7 @@ package eam.edu.co.applugaresproyectofinal.model
 import java.util.UUID
 
 data class Place(
-    val id: UUID,
+    val id: String,
     val images: List<String>,
     val description: String,
     val name: String,
@@ -11,8 +11,8 @@ data class Place(
     val phone: String,
     val category: Category,
     val reviews: List<Review>,
-    val createdById: UUID,
-    val approvedById: UUID?,
+    val createdById: String,
+    val approvedById: String?,
     val status: Status,
     val reports: List<Report>
 )
