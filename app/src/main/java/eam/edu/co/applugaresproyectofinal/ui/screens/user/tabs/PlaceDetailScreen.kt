@@ -1,5 +1,6 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,13 +15,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.ui.components.*
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.formatSchedules
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +81,7 @@ fun PlaceDetailScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            RatingBar(rating = 4)
+            RatingBar(rating = place.rating.roundToInt())
             TagChip(text = stringResource(R.string.label_created_by_me))
         }
 
@@ -112,22 +118,19 @@ fun PlaceDetailScreen(
         Spacer(Modifier.height(6.dp))
         PlaceInfoRow(
             icon = Icons.Filled.AccessTime,
-            text = stringResource(R.string.sample_place_schedule)
+            text = formatSchedules(context = LocalContext.current, place.scheduleList)
         )
 
         Spacer(Modifier.height(12.dp))
 
-        Box(
+        Image(
+            painter = painterResource(id = R.drawable.map),
+            contentDescription = stringResource(R.string.label_place_location),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp)
-                .background(Color(0xFFD6EAF8), RoundedCornerShape(12.dp))
-        ) {
-            Text(
-                stringResource(R.string.label_map),
-                modifier = Modifier.align(Alignment.Center)
-            )
-        }
+                .height(200.dp)
+                .clip(RoundedCornerShape(12.dp))
+        )
 
         Spacer(Modifier.height(16.dp))
 

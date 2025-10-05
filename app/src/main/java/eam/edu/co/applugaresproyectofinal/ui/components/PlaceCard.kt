@@ -16,8 +16,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import eam.edu.co.applugaresproyectofinal.R
 
 @Composable
 fun PlaceCard(
@@ -27,10 +30,17 @@ fun PlaceCard(
     createdBy: String,
     date: String,
     modifier: Modifier = Modifier,
-    icon: ImageVector,
+    iconContent: (@Composable () -> Unit)? = null,
     imageUrl: String = "https://validuspharma.com/wp-content/uploads/2019/06/nologo.png",
-    onIconClick: () -> Unit = {},
-    onCardClick: () -> Unit
+    onCardClick: () -> Unit,
+    iconContentPadding: Int = 8,
+    showActions: Boolean = false,
+    onConfirmClick: () -> Unit = {},
+    onCancelClick: () -> Unit = {},
+    labelConfirmBtn: String = "",
+    labelCancelBtn: String = "",
+    confirmBtnColor: Color = Color.Gray,
+    cancelBtnColor: Color = Color.White
 ) {
     Card(
         onClick = onCardClick,
@@ -38,9 +48,11 @@ fun PlaceCard(
             .fillMaxWidth()
             .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(
+            modifier = Modifier.padding(12.dp)
+        ) {
 
             Box(
                 modifier = Modifier
@@ -57,19 +69,14 @@ fun PlaceCard(
                         .fillMaxSize()
                         .background(Color(0xFFEDEDED))
                 )
-                IconButton(
-                    onClick = onIconClick,
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp)
-                        .size(28.dp)
-                        .background(Color.White, CircleShape)
-                ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        tint = Color.Black
-                    )
+                if (iconContent != null) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(iconContentPadding.dp)
+                    ) {
+                        iconContent()
+                    }
                 }
             }
 
@@ -124,6 +131,43 @@ fun PlaceCard(
                         text = date,
                         style = MaterialTheme.typography.bodySmall
                     )
+                }
+            }
+            if (showActions) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = { onConfirmClick },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = confirmBtnColor,
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(50),
+                    ) {
+                        Text(
+                            text = labelConfirmBtn
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Button(
+                        onClick = { onCancelClick },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = cancelBtnColor,
+                            contentColor = Color.Black
+                        ),
+                        shape = RoundedCornerShape(50)
+                    ) {
+                        Text(
+                            text = labelCancelBtn
+                        )
+                    }
                 }
             }
         }

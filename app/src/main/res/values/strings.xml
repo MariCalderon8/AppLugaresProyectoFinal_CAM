@@ -166,5 +166,20 @@
     <string name="SATURDAY">Sábado</string>
     <string name="SUNDAY">Domingo</string>
 
+    <!-- FILTERS -->
+    <string name="label_showing_results_for">Resultados para: "%1$s"</string>
+    <string name="label_filtering_by">Filtrando por: %1$s</string>
+    <string name="label_showing_all">Mostrando todos los lugares</string>
+    <string name="label_reported_by">Reportado por</string>
+
+    <!-- PLACE DETAIL ADMIN -->
+    <string name="label_user">" usuario"</string>
+    <string name="label_users">" usuarios"</string>
+    <string name="label_show_more">Ver más</string>
+    <string name="label_ignore_report">Ignorar reporte</string>
+    <string name="label_delete">Eliminar</string>
+    <string name="btn_moderator_approve">Aprobar</string>
+    <string name="btn_moderator_reject">Rechazar</string>
+
 
 </resources>

@@ -1,13 +1,11 @@
 package eam.edu.co.applugaresproyectofinal.model
 
-import java.util.UUID
-
 data class Place(
     val id: String,
     val images: List<String>,
     val description: String,
     val name: String,
-    val schedule: Schedule,
+    val scheduleList: List<Schedule>,
     val phone: String,
     val category: Category,
     val reviews: List<Review>,
@@ -16,4 +14,6 @@ data class Place(
     val status: Status,
     val reports: List<Report>,
     val address: String,
+    val location: Location,
+    val rating: Double
 )

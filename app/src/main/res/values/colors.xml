@@ -13,4 +13,12 @@
     <color name="blue_link">#4D81E7</color>
     <color name="red_required">#F83E5A</color>
 
+    <color name="primary">#6A1B9A</color>
+
+    <!-- STATUS -->
+    <color name="status_rejected">#EA4234</color>
+    <color name="status_reported">#3871E0</color>
+    <color name="status_pending">#FBBB01</color>
+    <color name="status_approved">#34A853</color>
+
 </resources>

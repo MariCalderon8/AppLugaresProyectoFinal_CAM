@@ -13,7 +13,7 @@ import eam.edu.co.applugaresproyectofinal.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTopBarCustom(
+fun TopBarCustom(
     title: String = "",
     showBack: Boolean = false,
     onBack: () -> Unit = {},

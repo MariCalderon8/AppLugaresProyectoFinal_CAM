@@ -2,16 +2,13 @@ package eam.edu.co.applugaresproyectofinal.ui.screens.user.nav
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Map
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
 import eam.edu.co.applugaresproyectofinal.R
-import eam.edu.co.applugaresproyectofinal.ui.components.AppTopBarCustom
+import eam.edu.co.applugaresproyectofinal.ui.components.TopBarCustom
 
 
 enum class NavigationConfig(
@@ -41,7 +38,7 @@ enum class NavigationConfig(
         showInBottomMenu = true,
         topBar =
             { _ ->
-                AppTopBarCustom(
+                TopBarCustom(
                     title = stringResource(R.string.label_favorites)
                 )
             }
@@ -55,7 +52,7 @@ enum class NavigationConfig(
         showInBottomMenu = true,
         topBar =
             { _ ->
-                AppTopBarCustom(
+                TopBarCustom(
                     title = stringResource(R.string.label_profile)
                 )
             }
@@ -66,7 +63,7 @@ enum class NavigationConfig(
         icon = null,
         topBar =
             { onSafeBack ->
-                AppTopBarCustom(
+                TopBarCustom(
                     title = stringResource(R.string.label_create_place),
                     showBack = true,
                     onBack = { onSafeBack() }
@@ -80,7 +77,7 @@ enum class NavigationConfig(
         label = null,
         topBar =
             { onSafeBack ->
-                AppTopBarCustom(
+                TopBarCustom(
                     title = stringResource(R.string.title_update_profile),
                     showBack = true,
                     onBack = { onSafeBack() }
@@ -95,7 +92,7 @@ enum class NavigationConfig(
         showBottomBar = true,
         topBar =
             { onSafeBack ->
-                AppTopBarCustom(
+                TopBarCustom(
                     showBack = true,
                     onBack = { onSafeBack() }
                 )

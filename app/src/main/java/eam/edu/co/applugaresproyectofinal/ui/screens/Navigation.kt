@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import eam.edu.co.applugaresproyectofinal.model.Role
 import eam.edu.co.applugaresproyectofinal.ui.screens.admin.ModerationScreen
+import eam.edu.co.applugaresproyectofinal.ui.screens.admin.nav.HomeAdmin
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.AuthScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.HomeUser
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RecoverPasswordEmailScreen
@@ -79,12 +80,12 @@ fun Navigation(
                 }
 
                 composable<RouteScreen.HomeAdmin> {
-                    ModerationScreen(
+                    HomeAdmin (
                         onLogout = {
                             SharedPrefsUtil.clearPreferences(context)
                             navController.navigate(RouteScreen.Auth)
                         },
-                        navController = navController
+
                     )
                 }
 

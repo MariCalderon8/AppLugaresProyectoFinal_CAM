@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
 import eam.edu.co.applugaresproyectofinal.R
-import eam.edu.co.applugaresproyectofinal.ui.components.AppTopBarCustom
+import eam.edu.co.applugaresproyectofinal.ui.components.TopBarCustom
 
 @Composable
 fun RecoverPasswordCodeScreen(
@@ -33,7 +33,7 @@ fun RecoverPasswordCodeScreen(
 ) {
     var code by remember { mutableStateOf("") }
 
-    AppTopBarCustom (
+    TopBarCustom (
         onBack = onBack,
         showBack = true
     )

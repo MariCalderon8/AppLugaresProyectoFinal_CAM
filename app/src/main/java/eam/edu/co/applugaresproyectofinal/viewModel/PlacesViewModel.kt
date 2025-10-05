@@ -2,6 +2,7 @@ package eam.edu.co.applugaresproyectofinal.viewModel
 
 import androidx.lifecycle.ViewModel
 import eam.edu.co.applugaresproyectofinal.model.Category
+import eam.edu.co.applugaresproyectofinal.model.Location
 import eam.edu.co.applugaresproyectofinal.model.Place
 import eam.edu.co.applugaresproyectofinal.model.Schedule
 import eam.edu.co.applugaresproyectofinal.model.Status
@@ -21,10 +22,10 @@ class PlacesViewModel: ViewModel() {
     }
 
     private fun loadPlaces() {
-        val schedule = Schedule(
-            dayOfWeek = DayOfWeek.MONDAY,
-            startTime = LocalTime.of(9, 0),   // 09:00 AM
-            endTime = LocalTime.of(18, 0)     // 06:00 PM
+        val schedule = listOf(
+            Schedule(DayOfWeek.MONDAY, LocalTime.of(9, 0), LocalTime.of(17, 0)),
+            Schedule(DayOfWeek.TUESDAY, LocalTime.of(9, 0), LocalTime.of(17, 0)),
+            Schedule(DayOfWeek.WEDNESDAY, LocalTime.of(14, 0), LocalTime.of(20, 0))
         )
 
         _places.value = listOf(
@@ -37,11 +38,13 @@ class PlacesViewModel: ViewModel() {
                 createdById = "1",
                 approvedById = null,
                 status = Status.APPROVED,
-                schedule = schedule,
+                scheduleList = schedule,
                 category = Category.CAFETERIA,
                 reviews = emptyList(),
                 reports = emptyList(),
-                address = "Calle 123, Ciudad"
+                address = "Calle 123, Ciudad",
+                location = Location(1.2345, 6.7890),
+                rating = 4.5
             ),
             Place(
                 id = UUID.randomUUID().toString(),
@@ -52,11 +55,13 @@ class PlacesViewModel: ViewModel() {
                 createdById = "1",
                 approvedById = UUID.randomUUID().toString(),
                 status = Status.PENDING_FOR_APPROVAL,
-                schedule = schedule,
+                scheduleList = schedule,
                 category = Category.RESTAURANT,
                 reviews = emptyList(),
                 reports = emptyList(),
-                address = "Avenida 456, Ciudad"
+                address = "Avenida 456, Ciudad",
+                location = Location(2.3456, 7.8901),
+                rating = 3.8
             ),
             Place(
                 id = UUID.randomUUID().toString(),
@@ -67,11 +72,47 @@ class PlacesViewModel: ViewModel() {
                 createdById = "3",
                 approvedById = null,
                 status = Status.PENDING_FOR_APPROVAL,
-                schedule = schedule,
+                scheduleList = schedule,
                 category = Category.MUSEUM,
                 reviews = emptyList(),
                 reports = emptyList(),
-                address = "Calle 789, Ciudad"
+                address = "Calle 789, Ciudad",
+                location = Location(3.4567, 8.9012),
+                rating = 4.2
+            ),
+            Place(
+                id = UUID.randomUUID().toString(),
+                images = listOf("https://dynamic-media-cdn.tripadvisor.com/media/photo-o/19/68/1b/4e/museo-nacional-de-columbia.jpg?w=900&h=500&s=1","https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/51/77/a2/intro-restaurant-plaza.jpg?w=900&h=500&s=1","https://dosg.net/wp-content/uploads/2018/03/cafeteria.jpg"),
+                description = "Un museo recreacional ideal para familias",
+                name = "Museo de la Alegría",
+                phone = "111-222-333",
+                createdById = "3",
+                approvedById = null,
+                status = Status.REJECTED,
+                scheduleList = schedule,
+                category = Category.FAST_FOOD,
+                reviews = emptyList(),
+                reports = emptyList(),
+                address = "Calle 789, Ciudad",
+                location = Location(3.4567, 8.9012),
+                rating = 2.2
+            ),
+            Place(
+                id = UUID.randomUUID().toString(),
+                images = listOf("https://dynamic-media-cdn.tripadvisor.com/media/photo-o/19/68/1b/4e/museo-nacional-de-columbia.jpg?w=900&h=500&s=1","https://dynamic-media-cdn.tripadvisor.com/media/photo-o/12/51/77/a2/intro-restaurant-plaza.jpg?w=900&h=500&s=1","https://dosg.net/wp-content/uploads/2018/03/cafeteria.jpg"),
+                description = "Un museo recreacional ideal para familias",
+                name = "Museo de la Alegría",
+                phone = "111-222-333",
+                createdById = "3",
+                approvedById = null,
+                status = Status.REPORTED,
+                scheduleList = schedule,
+                category = Category.HOTEL,
+                reviews = emptyList(),
+                reports = emptyList(),
+                address = "Calle 789, Ciudad",
+                location = Location(3.4567, 8.9012),
+                rating = 1.2
             )
         )
     }
@@ -95,6 +136,18 @@ class PlacesViewModel: ViewModel() {
     fun findPlaceById(id: String): Place? {
         return _places.value.find { it.id == id }
     }
+
+    // filtrar por estados y query
+    fun filterPlaces(
+        status: Status?,
+        query: String
+    ): List<Place> {
+        return _places.value.filter { place ->
+            (status == null || place.status == status) &&
+                    (query.isBlank() || place.name.contains(query, ignoreCase = true))
+        }
+    }
+
 
     // Buscar lugares por estado (Approved, Pending, etc.)
     fun findPlacesByStatus(status: Status): List<Place> {
