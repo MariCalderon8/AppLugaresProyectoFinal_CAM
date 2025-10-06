@@ -9,15 +9,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.OutlinedFlag
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.outlined.AssignmentLate
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.FileOpen
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -170,8 +167,9 @@ fun PlaceDetailScreen(
                 text = place.name,
                 style = MaterialTheme.typography.headlineSmall
             )
+
             Text(
-                text = place.name,
+                text = place.category.displayName,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray
             )
