@@ -23,4 +23,10 @@ sealed class RouteTab{
 
     @Serializable
     data class PlaceDetail(val placeId: String): RouteTab()
+
+    @Serializable
+    data class NewComment(val placeId: String): RouteTab()
+
+    @Serializable
+    data class NewReport(val placeId: String): RouteTab()
 }

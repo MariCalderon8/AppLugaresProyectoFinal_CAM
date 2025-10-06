@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.BottomSheetDefaults
@@ -41,11 +44,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Category
+import eam.edu.co.applugaresproyectofinal.ui.components.PlaceCard
+import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.formatSchedules
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,13 +60,28 @@ import kotlinx.coroutines.launch
 fun MapScreen(
     modifier: Modifier = Modifier,
     onSelectedCategory: (Category?) -> Unit = {},
+    onNavigateToPlaceDetail: (String) -> Unit,
 ) {
+
+    val placesViewModel = LocalMainViewModel.current.placesViewModel
+    val usersViewModel = LocalMainViewModel.current.usersViewModel
 
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
     var searchQuery by remember { mutableStateOf("") }
 
     val scaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
+
+    val filteredPlaces = placesViewModel.filterPlacesCategoryQuery(selectedCategory, "")
+
+    val categories = listOf(
+        null, // todas
+        Category.RESTAURANT,
+        Category.FAST_FOOD,
+        Category.CAFETERIA,
+        Category.MUSEUM,
+        Category.HOTEL,
+    )
 
     BottomSheetScaffold(
         scaffoldState = scaffoldState,
@@ -74,12 +96,55 @@ fun MapScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
             ) {
-                if (searchQuery.isNotBlank()) {
-                    Text("Mostrando resultados para: $searchQuery")
-                } else if (selectedCategory != null) {
-                    Text("Filtrando por: ${selectedCategory!!.displayName}")
-                } else {
-                    Text("Mostrando todos los lugares")
+
+                // Texto de resultados dinámico
+                Text(
+                    text = when {
+                        searchQuery.isNotBlank() -> stringResource(
+                            R.string.label_showing_results_for,
+                            searchQuery
+                        )
+
+                        selectedCategory == null -> stringResource(R.string.label_showing_all)
+                        else -> stringResource(R.string.label_filtering_by, selectedCategory!!.displayName)
+                    },
+                    color = Color.Gray,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                LazyColumn {
+                    items(filteredPlaces) { place ->
+                        PlaceCard(
+                            title = place.name,
+                            category = place.category.displayName,
+                            address = place.description,
+                            createdBy = usersViewModel.findUserById(place.createdById)?.name
+                                ?: "Desconocido",
+                            date = formatSchedules(context = LocalContext.current, place.scheduleList),
+                            iconContent = {
+                                Box(
+                                    modifier = Modifier
+                                        .size(32.dp)
+                                        .background(Color.White, CircleShape)
+                                        .padding(6.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Favorite,
+                                        contentDescription = null,
+                                        tint = Color.Black
+                                    )
+                                }
+                            },
+                            imageUrl = place.images[0],
+                            onCardClick = {
+                                onNavigateToPlaceDetail(place.id)
+                            }
+                        )
+                    }
                 }
             }
         },
@@ -143,7 +208,7 @@ fun MapScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    items(Category.values()) { category ->
+                    items(categories) { category ->
                         val isSelected = selectedCategory == category
 
                         FilterChip(
@@ -157,16 +222,18 @@ fun MapScreen(
                             },
                             label = {
                                 Text(
-                                    text = category.displayName,
+                                    text = category?.displayName ?: "Todos",
                                     color = if (isSelected) Color.White else Color.Black
                                 )
                             },
                             leadingIcon = {
-                                Icon(
-                                    imageVector = category.icon,
-                                    contentDescription = category.displayName,
-                                    tint = if (isSelected) Color.White else Color.Black
-                                )
+                                if (category != null) {
+                                    Icon(
+                                        imageVector = category.icon,
+                                        contentDescription = category.displayName ,
+                                        tint = if (isSelected) Color.White else Color.Black
+                                    )
+                                }
                             },
                             shape = RoundedCornerShape(50),
                             colors = FilterChipDefaults.filterChipColors(

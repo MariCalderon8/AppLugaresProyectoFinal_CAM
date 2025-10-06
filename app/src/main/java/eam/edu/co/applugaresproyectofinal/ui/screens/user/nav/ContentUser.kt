@@ -14,6 +14,8 @@ import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.CreatePlaceScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.FavoritesScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.MapScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.MyPlacesScreen
+import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.NewCommentScreen
+import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.NewReportScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.PlaceDetailScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.ProfileScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs.UpdateProfileScreen
@@ -30,7 +32,11 @@ fun ContentUser(
         modifier = Modifier.padding(padding)
     ) {
         composable<RouteTab.Map> {
-            MapScreen()
+            MapScreen(
+                onNavigateToPlaceDetail = {
+                    navController.navigate(RouteTab.PlaceDetail(it))
+                }
+            )
         }
         composable<RouteTab.Favorites> {
             FavoritesScreen(
@@ -63,7 +69,11 @@ fun ContentUser(
             )
         }
         composable<RouteTab.MyPlaces> {
-            MyPlacesScreen()
+            MyPlacesScreen(
+                onNavigateToPlaceDetail = {
+                    navController.navigate(RouteTab.PlaceDetail(it))
+                }
+            )
         }
         composable<RouteTab.UpdateProfile> {
             UpdateProfileScreen(
@@ -81,8 +91,33 @@ fun ContentUser(
                 placeId = args.placeId,
                 onBack = {
                     navController.popBackStack()
+                },
+                onNavigateToNewComment = {
+                    navController.navigate(RouteTab.NewComment(it))
+                },
+                onNavigateToNewReport = {
+                    navController.navigate(RouteTab.NewReport(it))
                 }
             )
+        }
+        composable<RouteTab.NewComment> {
+            val args = it.toRoute<RouteTab.NewComment>()
+            NewCommentScreen (
+                placeId = args.placeId,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable<RouteTab.NewReport> {
+            val args = it.toRoute<RouteTab.NewReport>()
+            NewReportScreen(
+                placeId = args.placeId,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+
         }
 
     }

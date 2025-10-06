@@ -21,7 +21,8 @@ import eam.edu.co.applugaresproyectofinal.ui.components.InputText
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewReportScreen(
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    placeId: String
 ) {
     var asunto by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
@@ -96,7 +97,10 @@ fun NewReportScreen(
 
             CustomButton(
                 text = stringResource(R.string.btn_submit_report),
-                onClick = { println("Reporte enviado: $asunto - $descripcion") },
+                onClick = {
+                    onBack()
+                    println("Reporte enviado: $asunto - $descripcion")
+                },
                 isLarge = true,
                 modifier = Modifier.fillMaxWidth()
             )

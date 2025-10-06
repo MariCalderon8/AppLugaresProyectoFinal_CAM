@@ -180,6 +180,13 @@
     <string name="label_delete">Eliminar</string>
     <string name="btn_moderator_approve">Aprobar</string>
     <string name="btn_moderator_reject">Rechazar</string>
+    <string name="title_my_places">Mis lugares</string>
+    <string name="label_answer">Responder</string>
+    <string name="label_remove_favorite">Quitar de favoritos</string>
+    <string name="label_add_to_favorite">Agregar a favoritos</string>
+    <string name="label_add_new_comment">Agregar Comentario</string>
+    <string name="label_place_open">Abierto</string>
+    <string name="label_place_closed">Cerrado</string>
 
 
 </resources>

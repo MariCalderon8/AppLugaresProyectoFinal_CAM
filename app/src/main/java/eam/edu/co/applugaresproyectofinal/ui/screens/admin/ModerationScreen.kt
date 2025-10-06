@@ -133,7 +133,7 @@ fun ModerationScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        //Chips con estados quemados
+        //Chips con estados
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth()

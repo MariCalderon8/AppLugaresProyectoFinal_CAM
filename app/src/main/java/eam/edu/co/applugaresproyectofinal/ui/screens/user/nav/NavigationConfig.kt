@@ -98,5 +98,45 @@ enum class NavigationConfig(
                 )
             },
     ),
-
+    MY_PLACES(
+        route = RouteTab.MyPlaces,
+        icon = null,
+        label = null,
+        showBottomBar = true,
+        topBar = { onSafeBack ->
+            TopBarCustom(
+                title = stringResource(R.string.title_my_places),
+                showBack = true,
+                onBack = { onSafeBack() }
+            )
+        }
+    ),
+    NEW_COMMENT(
+        route = RouteTab.PlaceDetail(""),
+        icon = null,
+        label = null,
+        showBottomBar = true,
+        canLoseChanges = true,
+        topBar =
+            { onSafeBack ->
+                TopBarCustom(
+                    showBack = true,
+                    onBack = { onSafeBack() }
+                )
+            },
+    ),
+    NEW_REPORT(
+        route = RouteTab.PlaceDetail(""),
+        icon = null,
+        label = null,
+        showBottomBar = true,
+        canLoseChanges = true,
+        topBar =
+            { onSafeBack ->
+                TopBarCustom(
+                    showBack = true,
+                    onBack = { onSafeBack() }
+                )
+            },
+    ),
 }

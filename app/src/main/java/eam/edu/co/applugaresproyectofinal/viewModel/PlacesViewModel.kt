@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.time.DayOfWeek
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.UUID
 
@@ -38,7 +39,7 @@ class PlacesViewModel: ViewModel() {
                 createdById = "1",
                 approvedById = null,
                 status = Status.APPROVED,
-                scheduleList = schedule,
+                scheduleList = schedule + Schedule(DayOfWeek.SUNDAY, LocalTime.of(20, 0), LocalTime.of(23, 0)),
                 category = Category.CAFETERIA,
                 reviews = emptyList(),
                 reports = emptyList(),
@@ -148,11 +149,22 @@ class PlacesViewModel: ViewModel() {
         }
     }
 
+    fun filterPlacesCategoryQuery(
+        category: Category?,
+        query: String
+    ): List<Place> {
+        return _places.value.filter { place ->
+            (category == null || place.category == category) &&
+                    (query.isBlank() || place.name.contains(query, ignoreCase = true))
+        }
+    }
+
 
     // Buscar lugares por estado (Approved, Pending, etc.)
     fun findPlacesByStatus(status: Status): List<Place> {
         return _places.value.filter { it.status == status }
     }
+
 
     // Buscar lugares por id de usuario
     fun findPlacesByUserId(userId: String): List<Place> {
@@ -164,4 +176,21 @@ class PlacesViewModel: ViewModel() {
         return _places.value.filter { it.approvedById == userId }
     }
 
+    fun getPlacesCreatedByUser(userId: String): List<Place> {
+        return _places.value.filter { it.createdById == userId }
+    }
+
+    fun isPlaceOpen(schedules: List<Schedule>): Boolean {
+        val now = LocalDateTime.now()
+        val currentDay = now.dayOfWeek
+        val currentTime = now.toLocalTime()
+
+        // Busca los horarios del día actual
+        val todaySchedules = schedules.filter { it.dayOfWeek == currentDay }
+
+        // Verifica si la hora actual está dentro de alguno de los intervalos
+        return todaySchedules.any { schedule ->
+            currentTime.isAfter(schedule.startTime) && currentTime.isBefore(schedule.endTime)
+        }
+    }
 }

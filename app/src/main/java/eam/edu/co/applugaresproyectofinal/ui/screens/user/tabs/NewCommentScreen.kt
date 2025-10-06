@@ -21,7 +21,8 @@ import eam.edu.co.applugaresproyectofinal.ui.components.InputText
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewCommentScreen(
-    onBack: () -> Unit = {} // 👈 callback para manejar la flecha atrás
+    onBack: () -> Unit = {},
+    placeId: String
 ) {
     var asunto by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
@@ -104,7 +105,10 @@ fun NewCommentScreen(
 
             CustomButton(
                 text = stringResource(R.string.btn_submit_comment),
-                onClick = { println("Comentario enviado: $asunto - $descripcion - $rating⭐") },
+                onClick = {
+                    onBack()
+                    println("Comentario enviado: $asunto - $descripcion - $rating⭐")
+                },
                 isLarge = true,
                 modifier = Modifier
                     .fillMaxWidth()

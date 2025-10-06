@@ -23,23 +23,6 @@ fun ReplyBox(
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp, horizontal = 4.dp)
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "Responder",
-                tint = Color.Gray
-            )
-            Spacer(Modifier.width(6.dp))
-            Text(text = "Responder", style = MaterialTheme.typography.bodyMedium)
-        }
-
-        Divider(color = Color.LightGray)
-
         Spacer(Modifier.height(8.dp))
 
         Row(
