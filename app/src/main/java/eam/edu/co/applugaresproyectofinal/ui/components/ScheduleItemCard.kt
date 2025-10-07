@@ -20,11 +20,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import eam.edu.co.applugaresproyectofinal.model.Schedule
+import eam.edu.co.applugaresproyectofinal.utils.convertDayToString
 
 @Composable
-fun ScheduleItemCard() {
+fun ScheduleItemCard(
+    schedule: Schedule
+) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,8 +50,8 @@ fun ScheduleItemCard() {
                 )
                 Spacer(Modifier.width(8.dp))
                 Column {
-                    Text("Lunes", fontWeight = FontWeight.Bold, color = Color(0xFF4A2C92))
-                    Text("7:00 am - 5:00 pm", color = Color.DarkGray)
+                    Text(convertDayToString(context, schedule.dayOfWeek), fontWeight = FontWeight.Bold, color = Color(0xFF4A2C92))
+                    Text("${schedule.startTime} - ${schedule.endTime}", color = Color.DarkGray)
                 }
             }
             IconButton(onClick = { /* en futuro: eliminar */ }) {
