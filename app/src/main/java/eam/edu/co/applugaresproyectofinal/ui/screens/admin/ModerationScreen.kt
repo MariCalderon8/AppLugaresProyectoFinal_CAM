@@ -46,8 +46,12 @@ fun ModerationScreen (){
     var selectedStatus by remember { mutableStateOf("Pendientes") }
 //    var selectedStatus by remember { mutableStateOf<Status>(null) }
 
+<<<<<<< Updated upstream
     // 🔹 Data quemada de lugares
     val allPlaces = listOf("Café Central", "Casa nueva", "Hotel Azul")
+=======
+        val places by placesViewModel.places.collectAsState()
+>>>>>>> Stashed changes
 
     // 🔹 Data quemada de estados
     val statuses = listOf("Pendientes", "Aprobados", "Rechazados", "Reportados")

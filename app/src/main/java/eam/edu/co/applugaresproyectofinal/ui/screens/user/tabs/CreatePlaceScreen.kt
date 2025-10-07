@@ -60,11 +60,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Category
+<<<<<<< Updated upstream
+=======
+import eam.edu.co.applugaresproyectofinal.model.Location
+import eam.edu.co.applugaresproyectofinal.model.Place
+import eam.edu.co.applugaresproyectofinal.model.Schedule
+import eam.edu.co.applugaresproyectofinal.ui.components.AlertDialogCustom
+>>>>>>> Stashed changes
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
 import eam.edu.co.applugaresproyectofinal.ui.components.Label
 import eam.edu.co.applugaresproyectofinal.ui.components.ScheduleDialog
 import eam.edu.co.applugaresproyectofinal.ui.components.ScheduleItemCard
+import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import java.util.UUID
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,9 +89,10 @@ fun CreatePlaceScreen(
 
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
 
+    val placeViewModel = LocalMainViewModel.current.placesViewModel
 
     var showDialogSchedule by remember { mutableStateOf(false) }
-    var schedule by remember { mutableStateOf("") }
+    var schedules = remember { mutableListOf<Schedule>() }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -104,11 +114,33 @@ fun CreatePlaceScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically),
             modifier = Modifier
+<<<<<<< Updated upstream
                 .fillMaxSize()
                 .padding(18.dp)
                 .verticalScroll(rememberScrollState()),
+=======
+        )
+
+
+        Label(stringResource(R.string.label_place_schedule), isRequired = true)
+
+
+        schedules.forEach {
+            ScheduleItemCard(it)
+        }
+
+        FloatingActionButton(
+            onClick = { showDialogSchedule = true },
+            shape = CircleShape,
+            containerColor = Color(0xFF6A1B9A),
+            modifier = Modifier
+                .padding(top = 12.dp)
+                .size(48.dp)
+                .align(Alignment.CenterHorizontally)
+>>>>>>> Stashed changes
         ) {
 
+<<<<<<< Updated upstream
             InputText(
                 value = placeName,
                 isRequired = true,
@@ -123,6 +155,16 @@ fun CreatePlaceScreen(
                 placeholder = stringResource(R.string.name_placeholder),
                 icon = Icons.Outlined.Store,
             )
+=======
+        if (showDialogSchedule) {
+            ScheduleDialog(
+                addSchedule = { schedule ->
+                    schedules.add(schedule)
+                },
+                onDimiss = { showDialogSchedule = false }
+            )
+        }
+>>>>>>> Stashed changes
 
             Label(
                 text = stringResource(R.string.label_place_category),
@@ -345,6 +387,59 @@ fun CreatePlaceScreen(
             )
 
         }
+<<<<<<< Updated upstream
+=======
+
+        Label(
+            text = stringResource(R.string.label_place_location),
+            isRequired = true,
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.map),
+            contentDescription = stringResource(R.string.label_place_location),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(RoundedCornerShape(12.dp))
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        CustomButton(
+            text = stringResource(R.string.btn_create_place),
+            onClick = {
+
+                if(selectedCategory!=null) {
+
+                    val place = Place(
+                        id = UUID.randomUUID().toString(),
+                        images = listOf(
+                            "https://validuspharma.com/wp-content/uploads/2019/06/nologo.png"
+                        ),
+                        description = description,
+                        name = placeName,
+                        scheduleList = schedules,
+                        phone = phoneNumber,
+                        category = selectedCategory!!,
+                        reviews = emptyList(),
+                        createdById = "1",
+                        approvedById = null,
+                        status = eam.edu.co.applugaresproyectofinal.model.Status.PENDING_FOR_APPROVAL,
+                        reports = emptyList(),
+                        address = address,
+                        location = Location(0.0, 0.0),
+                        rating = 0.0
+                    )
+
+                    placeViewModel.addPlace(place)
+                    onNavigateToMyPlaces()
+                }
+            },
+            isLarge = true
+        )
+
+>>>>>>> Stashed changes
     }
 }
 

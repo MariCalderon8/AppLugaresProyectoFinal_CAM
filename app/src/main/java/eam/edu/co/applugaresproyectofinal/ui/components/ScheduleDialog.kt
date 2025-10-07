@@ -34,14 +34,19 @@ import androidx.compose.ui.window.Dialog
 import eam.edu.co.applugaresproyectofinal.R
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
-
+import eam.edu.co.applugaresproyectofinal.model.Schedule
+import eam.edu.co.applugaresproyectofinal.model.ScheduleDay
+import java.time.LocalTime
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScheduleDialog(onDimiss: () -> Unit) {
+fun ScheduleDialog(
+    addSchedule: (Schedule) -> Unit,
+    onDimiss: () -> Unit
+) {
 
-    var selectedDays by remember { mutableStateOf(setOf<String>()) }
+    var selectedDays by remember { mutableStateOf(setOf<ScheduleDay>()) }
 
     // Estados para los dos pickers
     val openTimeState = rememberTimePickerState(
@@ -103,7 +108,20 @@ fun ScheduleDialog(onDimiss: () -> Unit) {
             Spacer(Modifier.height(30.dp))
 
             Button(
-                onClick = { onDimiss() },
+                onClick = {
+
+                    selectedDays.forEach {
+                        val schedule = Schedule(
+                            dayOfWeek = it.day,
+                            startTime = LocalTime.of(openTimeState.hour, openTimeState.minute),
+                            endTime = LocalTime.of(closeTimeState.hour, closeTimeState.minute)
+                        )
+
+                        addSchedule(schedule)
+                    }
+
+                    onDimiss()
+                },
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7A4EE5))
             ) {

@@ -4,6 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="MainActivity">
         <option name="selectionMode" value="DROPDOWN" />
+<<<<<<< Updated upstream
         <DropdownSelection timestamp="2025-10-03T03:04:22.493167700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
@@ -19,6 +20,12 @@
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=RFCT91505ME" />
+=======
+        <DropdownSelection timestamp="2025-10-07T01:57:56.536503500Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=R8YXA11TWCL" />
+>>>>>>> Stashed changes
             </handle>
           </Target>
         </DropdownSelection>

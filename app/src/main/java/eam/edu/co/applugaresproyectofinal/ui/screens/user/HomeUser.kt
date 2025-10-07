@@ -25,6 +25,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.nav.ContentUser
 import eam.edu.co.applugaresproyectofinal.R
+<<<<<<< Updated upstream
+=======
+import eam.edu.co.applugaresproyectofinal.ui.components.AlertDialogCustom
+import eam.edu.co.applugaresproyectofinal.ui.components.TopBarCustom
+import eam.edu.co.applugaresproyectofinal.ui.screens.user.nav.NavigationConfig
+>>>>>>> Stashed changes
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.nav.RouteTab
 
 
@@ -49,6 +55,7 @@ fun HomeUser() {
             }
         },
         topBar = {
+<<<<<<< Updated upstream
             TopBarUser(
                 navController = navController
             )
@@ -58,6 +65,50 @@ fun HomeUser() {
                 navController = navController
             )
         },
+=======
+            TopBarCustom(
+                title = stringResource(R.string.label_profile)
+            )
+        },
+        bottomBar = {
+            //if (currentDestination?.showBottomBar == true) {
+                NavigationBar {
+                    NavigationConfig.entries
+                        .filter { it.showInBottomMenu }
+                        .forEach { destination ->
+                            val isSelected = currentDestination?.route == destination.route
+
+                            NavigationBarItem(
+                                selected = isSelected,
+                                onClick = { navController.navigate(destination.route) },
+                                icon = {
+                                    if (destination.icon != null && destination.label != null) {
+                                        Icon(
+                                            imageVector = destination.icon,
+                                            contentDescription = stringResource(destination.label)
+                                        )
+                                    }
+                                },
+                                label = {
+                                    if (destination.label != null) {
+                                        Text(
+                                            text = stringResource(destination.label)
+                                        )
+                                    }
+                                },
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = Color.Gray,
+                                    selectedTextColor = Color.Gray,
+                                    indicatorColor = Color(0xFFD1C4E9),
+                                    unselectedIconColor = Color.Gray,
+                                    unselectedTextColor = Color.Gray
+                                )
+                            )
+                        }
+                }
+            //}
+        }
+>>>>>>> Stashed changes
     ) { padding ->
         ContentUser(
             padding = padding,
