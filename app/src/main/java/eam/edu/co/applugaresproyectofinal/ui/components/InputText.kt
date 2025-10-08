@@ -37,10 +37,20 @@ fun InputText(
         unfocusedBorderColor = colorResource(R.color.light_gray),
     ),
     singleLine: Boolean = true,
-    height: Int? = null
+    height: Int? = null,
+    registerValidator: ((() -> Boolean) -> Unit)? = null
 ) {
-    var isError by rememberSaveable { mutableStateOf(false) }
+    var showError by rememberSaveable { mutableStateOf(false) }
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+
+    // Permite que el padre ejecute esta validación más tarde (al presionar el botón)
+    LaunchedEffect(Unit) {
+        registerValidator?.invoke {
+            val isError = onValidate(value)
+            showError = isError
+            isError
+        }
+    }
 
     Column(
         modifier = modifier.fillMaxWidth()
@@ -60,7 +70,7 @@ fun InputText(
             value = value,
             onValueChange = {
                 onValueChange(it)
-                isError = onValidate(it)
+                showError = onValidate(it)
             },
             placeholder = {
                 Text(text = placeholder, fontSize = fontSize.sp, color = colorResource(R.color.light_gray))
@@ -92,9 +102,9 @@ fun InputText(
                     }
                 }
             },
-            isError = isError,
+            isError = showError,
             supportingText = {
-                if (isError) {
+                if (showError) {
                     Text(text = supportingText)
                 }
             },

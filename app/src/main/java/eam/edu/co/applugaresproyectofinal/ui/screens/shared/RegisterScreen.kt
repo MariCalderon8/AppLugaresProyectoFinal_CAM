@@ -60,6 +60,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
+    val validators = remember { mutableListOf<() -> Boolean>() }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -84,8 +85,8 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                     name.isBlank()
                 },
                 icon = Icons.Outlined.Person,
-                modifier = Modifier.weight(1f)
-
+                modifier = Modifier.weight(1f),
+                registerValidator = { validator -> validators.add(validator) }
             )
 
             InputText(
@@ -98,8 +99,8 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                 onValidate = {
                     lastname.isBlank()
                 },
-                modifier = Modifier.weight(1f)
-
+                modifier = Modifier.weight(1f),
+                registerValidator = { validator -> validators.add(validator) }
             )
         }
 
@@ -114,6 +115,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                 username.isBlank()
             },
             icon = Icons.Outlined.PersonPin,
+            registerValidator = { validator -> validators.add(validator) }
         )
 
         DropdownMenu(
@@ -147,7 +149,8 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                 phoneNumber.isBlank() || !Patterns.PHONE.matcher(phoneNumber).matches()
             },
             icon = Icons.Outlined.Phone,
-            modifier = Modifier
+            modifier = Modifier,
+            registerValidator = { validator -> validators.add(validator) }
         )
 
         InputText(
@@ -161,7 +164,8 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                 email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()
             },
             icon = Icons.Outlined.Email,
-            modifier = Modifier
+            modifier = Modifier,
+            registerValidator = { validator -> validators.add(validator) }
         )
 
         InputText(
@@ -176,8 +180,8 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                 password.isBlank() || password.length < 5
             },
             icon = Icons.Outlined.Lock,
-            modifier = Modifier
-
+            modifier = Modifier,
+            registerValidator = { validator -> validators.add(validator) }
         )
 
 
@@ -193,12 +197,27 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                 password != confirmPassword
             },
             icon = Icons.Outlined.Lock,
-            modifier = Modifier
+            modifier = Modifier,
+            registerValidator = { validator -> validators.add(validator) }
         )
 
         CustomButton(
             text = stringResource(R.string.btn_register),
             onClick = {
+                var hasErrors = false
+                validators.forEach { validator ->
+                    if (validator()) hasErrors = true
+                }
+
+                if (hasErrors) {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.error_fill_all_fields),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@CustomButton
+                }
+
                 usersViewModel.addUser(
                     User(
                         id = UUID.randomUUID().toString(),

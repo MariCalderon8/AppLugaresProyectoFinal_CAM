@@ -1,6 +1,5 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -100,7 +99,7 @@ fun PlaceDetailScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RatingBar(rating = place.rating.roundToInt())
+                RatingBar(rating = placesViewModel.getPlaceRating(placeId).roundToInt())
 
                 if (user != null) {
                     if (user.id == place.createdById) {
@@ -148,7 +147,7 @@ fun PlaceDetailScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Outlined.AssignmentLate,
-                                        contentDescription = stringResource(R.string.label_delete),
+                                        contentDescription = stringResource(R.string.label_reject_place),
                                         tint = Color.White,
                                         modifier = Modifier.size(20.dp)
                                     )

@@ -33,7 +33,7 @@
 
     <string name="error_name">El nombre es obligatorio</string>
     <string name="error_lastname">El apellido es obligatorio</string>
-    <string name="error_phonenumber">El teléfono es obligatorio</string>
+    <string name="error_phonenumber">El teléfono es obligatorio y debe ser válido</string>
     <string name="error_confirm_password">Las contraseñas no coinciden</string>
     <string name="error_city">La ciudad es obligatoria</string>
     <string name="error_country">El país es obligatorio</string>
@@ -111,6 +111,9 @@
     <string name="label_no_results">No hay lugares</string>
     <string name="label_no_results_description">No se encontraron lugares con el filtro seleccionado</string>
 
+    <string name="error_select_category">La categoría es obligatoria</string>
+    <string name="error_schedule_required">Debe ingresar al menos un horario</string>
+
     <!-- NEW COMMENT -->
     <string name="title_new_comment">Nuevo comentario</string>
     <string name="subtitle_new_comment">Tu opinión es muy valiosa. Al calificar y dejar un comentario sobre este lugar, estás ayudando a otros a tomar decisiones informadas y a descubrir nuevos espacios que valen la pena. ¡Cada experiencia cuenta!</string>
@@ -177,7 +180,7 @@
     <string name="label_users">" usuarios"</string>
     <string name="label_show_more">Ver más</string>
     <string name="label_ignore_report">Ignorar reporte</string>
-    <string name="label_delete">Eliminar</string>
+    <string name="label_reject_place">Eliminar</string>
     <string name="btn_moderator_approve">Aprobar</string>
     <string name="btn_moderator_reject">Rechazar</string>
     <string name="title_my_places">Mis lugares</string>
@@ -187,6 +190,12 @@
     <string name="label_add_new_comment">Agregar Comentario</string>
     <string name="label_place_open">Abierto</string>
     <string name="label_place_closed">Cerrado</string>
+
+    <!-- GENERAL -->
+    <string name="error_fill_all_fields">Por favor rellene todos los campos obligatorios</string>
+    <string name="error_field_required">Campo requerido</string>
+
+    <string name="label_success_report_sent">Lugar reportado con éxito</string>
 
 
 </resources>

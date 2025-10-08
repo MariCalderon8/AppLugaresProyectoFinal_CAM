@@ -1,6 +1,7 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
 import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,29 +21,24 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.AddAPhoto
-import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.Cancel
-import androidx.compose.material.icons.outlined.Fastfood
 import androidx.compose.material.icons.outlined.Image
-import androidx.compose.material.icons.outlined.LocalCafe
-import androidx.compose.material.icons.outlined.Museum
 import androidx.compose.material.icons.outlined.Phone
-import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.Store
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,6 +50,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -88,7 +85,12 @@ fun CreatePlaceScreen(
     val placeViewModel = LocalMainViewModel.current.placesViewModel
 
     var showDialogSchedule by remember { mutableStateOf(false) }
-    var schedules = remember { mutableListOf<Schedule>() }
+    var schedules = remember { mutableStateListOf<Schedule>() }
+    val validators = remember { mutableListOf<() -> Boolean>() }
+    val context = LocalContext.current
+
+    var categoryError by remember { mutableStateOf(false) }
+    var scheduleError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -128,6 +130,7 @@ fun CreatePlaceScreen(
                 },
                 placeholder = stringResource(R.string.name_placeholder),
                 icon = Icons.Outlined.Store,
+                registerValidator = { validator -> validators.add(validator) }
             )
 
             Label(
@@ -145,7 +148,12 @@ fun CreatePlaceScreen(
 
                     FilterChip(
                         selected = isSelected,
-                        onClick = { selectedCategory = category },
+                        onClick = {
+                            selectedCategory = category
+                            if (categoryError && selectedCategory != null) {
+                                categoryError = false
+                            }
+                                  },
                         label = {
                             Text(
                                 category.displayName,
@@ -173,6 +181,17 @@ fun CreatePlaceScreen(
                 }
             }
 
+            if (categoryError) {
+                Text(
+                    text = stringResource(R.string.error_select_category),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(start = 12.dp, top = 2.dp)
+                )
+            }
+
             InputText(
                 value = description,
                 isRequired = true,
@@ -186,7 +205,8 @@ fun CreatePlaceScreen(
                 },
                 singleLine = false,
                 placeholder = stringResource(R.string.description_placeholder),
-                height = 150
+                height = 150,
+                registerValidator = { validator -> validators.add(validator) }
             )
 
             InputText(
@@ -202,6 +222,7 @@ fun CreatePlaceScreen(
                 },
                 placeholder = stringResource(R.string.address_placeholder),
                 icon = Icons.Default.LocationOn,
+                registerValidator = { validator -> validators.add(validator) }
             )
 
             InputText(
@@ -217,15 +238,33 @@ fun CreatePlaceScreen(
                 },
                 placeholder = stringResource(R.string.phone_placeholder),
                 icon = Icons.Outlined.Phone,
-                modifier = Modifier
+                modifier = Modifier,
+                registerValidator = { validator -> validators.add(validator) }
             )
 
 
             Label(stringResource(R.string.label_place_schedule), isRequired = true)
 
             schedules.forEach {
-                ScheduleItemCard(it)
+                ScheduleItemCard(
+                    it,
+                    onRemove = {
+                        schedules.remove(it)
+                        if (schedules.isEmpty()) scheduleError = true
+                    }
+                )
             }
+
+            if (scheduleError) {
+                Text(
+                    text = stringResource(R.string.error_schedule_required),
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier
+                        .padding(start = 4.dp, top = 2.dp)
+                )
+            }
+
 
             FloatingActionButton(
                 onClick = { showDialogSchedule = true },
@@ -243,6 +282,7 @@ fun CreatePlaceScreen(
                 ScheduleDialog(
                     addSchedule = { schedule ->
                         schedules.add(schedule)
+                        scheduleError = false
                     },
                     onDimiss = { showDialogSchedule = false }
                 )
@@ -352,32 +392,46 @@ fun CreatePlaceScreen(
             CustomButton(
                 text = stringResource(R.string.btn_create_place),
                 onClick = {
-
-                    if(selectedCategory!=null) {
-
-                        val place = Place(
-                            id = UUID.randomUUID().toString(),
-                            images = listOf(
-                                "https://validuspharma.com/wp-content/uploads/2019/06/nologo.png"
-                            ),
-                            description = description,
-                            name = placeName,
-                            scheduleList = schedules,
-                            phone = phoneNumber,
-                            category = selectedCategory!!,
-                            reviews = emptyList(),
-                            createdById = "1",
-                            approvedById = null,
-                            status = eam.edu.co.applugaresproyectofinal.model.Status.PENDING_FOR_APPROVAL,
-                            reports = emptyList(),
-                            address = address,
-                            location = Location(0.0, 0.0),
-                            rating = 0.0
-                        )
-
-                        placeViewModel.addPlace(place)
-                        onNavigateToMyPlaces()
+                    var hasErrors = false
+                    validators.forEach { validator ->
+                        if (validator()) hasErrors = true
                     }
+
+                    categoryError = selectedCategory == null
+                    scheduleError = schedules.isEmpty()
+                    if (categoryError || scheduleError) hasErrors = true
+
+                    if (hasErrors) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.error_fill_all_fields),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@CustomButton
+                    }
+
+                    val place = Place(
+                        id = UUID.randomUUID().toString(),
+                        images = listOf(
+                            "https://validuspharma.com/wp-content/uploads/2019/06/nologo.png"
+                        ),
+                        description = description,
+                        name = placeName,
+                        scheduleList = schedules,
+                        phone = phoneNumber,
+                        category = selectedCategory!!,
+                        reviews = emptyList(),
+                        createdById = "1",
+                        handledBy = null,
+                        status = eam.edu.co.applugaresproyectofinal.model.Status.PENDING_FOR_APPROVAL,
+                        reports = emptyList(),
+                        address = address,
+                        location = Location(0.0, 0.0),
+                    )
+
+                    placeViewModel.addPlace(place)
+                    onNavigateToMyPlaces()
+
                 },
                 isLarge = true
             )

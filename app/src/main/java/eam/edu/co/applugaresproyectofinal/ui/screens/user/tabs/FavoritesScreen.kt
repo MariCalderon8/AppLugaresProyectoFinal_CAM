@@ -22,7 +22,6 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +34,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Category
-import eam.edu.co.applugaresproyectofinal.model.Status
 import eam.edu.co.applugaresproyectofinal.ui.components.PlaceCard
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
 import eam.edu.co.applugaresproyectofinal.utils.formatSchedules
@@ -49,7 +47,7 @@ fun FavoritesScreen(
     val usersViewModel = LocalMainViewModel.current.usersViewModel
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
 
-    val filteredPlaces = placesViewModel.filterPlacesCategoryQuery(selectedCategory, "")
+    val filteredPlaces = placesViewModel.filterPlacesUserCategoryQuery(selectedCategory, "")
 
     val categories = listOf(
         null, // todas

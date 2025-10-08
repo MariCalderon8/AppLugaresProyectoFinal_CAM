@@ -102,7 +102,7 @@ fun PlaceDetailAdminScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RatingBar(rating = place.rating.roundToInt())
+                RatingBar(rating = placesViewModel.getPlaceRating(placeId).roundToInt())
             }
             Spacer(Modifier.height(8.dp))
         }
@@ -192,12 +192,15 @@ fun PlaceDetailAdminScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            ReportCard(
-                reason = "Dirección Falsa",
-                description = "Descripción, bla bla bla",
-                reporterName = "Juacho",
-                reporterUsername = "Juanchito"
-            )
+            place.reports.forEach { report ->
+                val reporter = usersViewModel.findUserById(report.userId) ?: return@forEach
+                ReportCard(
+                    reason = report.subject,
+                    description = report.description,
+                    reporterName = reporter.name,
+                    reporterUsername = reporter.username
+                )
+            }
 
             Spacer(Modifier.height(16.dp))
 
@@ -218,7 +221,7 @@ fun PlaceDetailAdminScreen(
                     shape = RoundedCornerShape(50)
                 ) {
                     Text(
-                        text = stringResource(R.string.label_delete)
+                        text = stringResource(R.string.label_reject_place)
                     )
                 }
                 Spacer(modifier = Modifier.width(8.dp))

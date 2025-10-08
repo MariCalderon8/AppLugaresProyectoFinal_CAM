@@ -1,5 +1,6 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -8,6 +9,7 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -15,8 +17,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import eam.edu.co.applugaresproyectofinal.R
+import eam.edu.co.applugaresproyectofinal.model.Report
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
+import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -24,8 +30,16 @@ fun NewReportScreen(
     onBack: () -> Unit = {},
     placeId: String
 ) {
-    var asunto by remember { mutableStateOf("") }
-    var descripcion by remember { mutableStateOf("") }
+    val placesViewModel = LocalMainViewModel.current.placesViewModel
+    val usersViewModel = LocalMainViewModel.current.usersViewModel
+    val context = LocalContext.current
+
+    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"]?: return)
+
+    var subject by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+
+    val validators = remember { mutableListOf<() -> Boolean>() }
 
     Scaffold(
         topBar = {
@@ -50,25 +64,27 @@ fun NewReportScreen(
                 .padding(16.dp)
         ) {
             InputText(
-                value = asunto,
+                value = subject,
                 label = stringResource(R.string.label_report_subject),
                 placeholder = stringResource(R.string.placeholder_report_subject),
-                supportingText = "Campo requerido",
-                onValueChange = { asunto = it },
-                onValidate = { it.isEmpty() }
+                supportingText = stringResource(R.string.error_field_required),
+                onValueChange = { subject = it },
+                onValidate = { subject.isBlank() },
+                registerValidator = { validator -> validators.add(validator) }
             )
 
             Spacer(Modifier.height(16.dp))
 
             InputText(
-                value = descripcion,
+                value = description,
                 label = stringResource(R.string.label_report_description),
                 placeholder = stringResource(R.string.placeholder_report_description),
-                supportingText = "Campo requerido",
-                onValueChange = { descripcion = it },
-                onValidate = { it.isEmpty() },
+                supportingText = stringResource(R.string.error_field_required),
+                onValueChange = { description = it },
+                onValidate = { description.isBlank() },
                 height = 120,
-                singleLine = false
+                singleLine = false,
+                registerValidator = { validator -> validators.add(validator) }
             )
 
             Spacer(Modifier.height(20.dp))
@@ -98,8 +114,36 @@ fun NewReportScreen(
             CustomButton(
                 text = stringResource(R.string.btn_submit_report),
                 onClick = {
+                    if (user == null) return@CustomButton
+
+                    var hasErrors = false
+                    validators.forEach { validator ->
+                        if (validator()) hasErrors = true
+                    }
+
+                    if (hasErrors) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.error_fill_all_fields),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@CustomButton
+                    }
+
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.label_success_report_sent),
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    placesViewModel.addReport(placeId, Report(
+                        id = UUID.randomUUID().toString(),
+                        subject = subject,
+                        description = description,
+                        userId = user.id
+                    ))
+
                     onBack()
-                    println("Reporte enviado: $asunto - $descripcion")
                 },
                 isLarge = true,
                 modifier = Modifier.fillMaxWidth()

@@ -267,10 +267,12 @@ fun ModerationScreen(
                             },
                             iconContentPadding = 4,
                             showActions = true,
-                            onCancelClick = {},
-                            onConfirmClick = {},
+                            onCancelClick = {
+                            },
+                            onConfirmClick = {
+                            },
                             labelCancelBtn = stringResource(R.string.label_ignore_report),
-                            labelConfirmBtn = stringResource(R.string.label_delete),
+                            labelConfirmBtn = stringResource(R.string.label_reject_place),
                             confirmBtnColor = colorResource(R.color.status_rejected)
                         )
                     } else {

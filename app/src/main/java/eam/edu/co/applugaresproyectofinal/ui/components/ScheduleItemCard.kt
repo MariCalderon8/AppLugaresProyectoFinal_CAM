@@ -28,7 +28,8 @@ import eam.edu.co.applugaresproyectofinal.utils.convertDayToString
 
 @Composable
 fun ScheduleItemCard(
-    schedule: Schedule
+    schedule: Schedule,
+    onRemove: () -> Unit = {}
 ) {
     val context = LocalContext.current
     Box(
@@ -54,7 +55,9 @@ fun ScheduleItemCard(
                     Text("${schedule.startTime} - ${schedule.endTime}", color = Color.DarkGray)
                 }
             }
-            IconButton(onClick = { /* en futuro: eliminar */ }) {
+            IconButton(onClick = {
+                onRemove()
+            }) {
                 Icon(Icons.Default.Close, contentDescription = "Eliminar horario")
             }
         }

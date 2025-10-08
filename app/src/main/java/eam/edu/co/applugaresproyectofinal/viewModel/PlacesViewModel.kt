@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import eam.edu.co.applugaresproyectofinal.model.Category
 import eam.edu.co.applugaresproyectofinal.model.Location
 import eam.edu.co.applugaresproyectofinal.model.Place
+import eam.edu.co.applugaresproyectofinal.model.Report
+import eam.edu.co.applugaresproyectofinal.model.Review
 import eam.edu.co.applugaresproyectofinal.model.Schedule
 import eam.edu.co.applugaresproyectofinal.model.Status
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,15 +39,35 @@ class PlacesViewModel: ViewModel() {
                 name = "Café Central",
                 phone = "123-456-789",
                 createdById = "1",
-                approvedById = null,
+                handledBy = null,
                 status = Status.APPROVED,
                 scheduleList = schedule + Schedule(DayOfWeek.SUNDAY, LocalTime.of(20, 0), LocalTime.of(23, 0)),
                 category = Category.CAFETERIA,
-                reviews = emptyList(),
-                reports = emptyList(),
                 address = "Calle 123, Ciudad",
                 location = Location(1.2345, 6.7890),
-                rating = 4.5
+                reviews = listOf(
+                    Review(
+                        id = UUID.randomUUID().toString(),
+                        subject = "Excelente atención",
+                        description = "El personal fue muy amable y el lugar estaba limpio.",
+                        rating = 5.5,
+                        userId = "3"
+                    ),
+                    Review(
+                        id = UUID.randomUUID().toString(),
+                        subject = "Buena comida",
+                        description = "La comida estaba deliciosa, pero el servicio fue un poco lento.",
+                        rating = 4.0,
+                        userId = "3"
+                    ),
+                    Review(
+                        id = UUID.randomUUID().toString(),
+                        subject = "No fue lo que esperaba",
+                        description = "El lugar se veía diferente a las fotos y el ambiente no fue agradable.",
+                        rating = 2.5,
+                        userId = "3"
+                    )
+                ),
             ),
             Place(
                 id = UUID.randomUUID().toString(),
@@ -54,7 +76,7 @@ class PlacesViewModel: ViewModel() {
                 name = "Trattoria Roma",
                 phone = "321-654-987",
                 createdById = "1",
-                approvedById = UUID.randomUUID().toString(),
+                handledBy = UUID.randomUUID().toString(),
                 status = Status.PENDING_FOR_APPROVAL,
                 scheduleList = schedule,
                 category = Category.RESTAURANT,
@@ -62,7 +84,6 @@ class PlacesViewModel: ViewModel() {
                 reports = emptyList(),
                 address = "Avenida 456, Ciudad",
                 location = Location(2.3456, 7.8901),
-                rating = 3.8
             ),
             Place(
                 id = UUID.randomUUID().toString(),
@@ -71,7 +92,7 @@ class PlacesViewModel: ViewModel() {
                 name = "Museo de la Alegría",
                 phone = "111-222-333",
                 createdById = "3",
-                approvedById = null,
+                handledBy = null,
                 status = Status.PENDING_FOR_APPROVAL,
                 scheduleList = schedule,
                 category = Category.MUSEUM,
@@ -79,7 +100,6 @@ class PlacesViewModel: ViewModel() {
                 reports = emptyList(),
                 address = "Calle 789, Ciudad",
                 location = Location(3.4567, 8.9012),
-                rating = 4.2
             ),
             Place(
                 id = UUID.randomUUID().toString(),
@@ -88,7 +108,7 @@ class PlacesViewModel: ViewModel() {
                 name = "Museo de la Alegría",
                 phone = "111-222-333",
                 createdById = "3",
-                approvedById = null,
+                handledBy = null,
                 status = Status.REJECTED,
                 scheduleList = schedule,
                 category = Category.FAST_FOOD,
@@ -96,7 +116,6 @@ class PlacesViewModel: ViewModel() {
                 reports = emptyList(),
                 address = "Calle 789, Ciudad",
                 location = Location(3.4567, 8.9012),
-                rating = 2.2
             ),
             Place(
                 id = UUID.randomUUID().toString(),
@@ -105,15 +124,33 @@ class PlacesViewModel: ViewModel() {
                 name = "Museo de la Alegría",
                 phone = "111-222-333",
                 createdById = "3",
-                approvedById = null,
+                handledBy = null,
                 status = Status.REPORTED,
                 scheduleList = schedule,
                 category = Category.HOTEL,
                 reviews = emptyList(),
-                reports = emptyList(),
+                reports = listOf(
+                    Report(
+                        id = UUID.randomUUID().toString(),
+                        subject = "Información incorrecta",
+                        description = "El número de teléfono publicado no corresponde al negocio.",
+                        userId = "1"
+                    ),
+                    Report(
+                        id = UUID.randomUUID().toString(),
+                        subject = "Contenido inapropiado",
+                        description = "Las imágenes del lugar no son apropiadas para todo público.",
+                        userId = "2"
+                    ),
+                    Report(
+                        id = UUID.randomUUID().toString(),
+                        subject = "Ubicación errónea",
+                        description = "El mapa muestra el lugar en una dirección diferente a la real.",
+                        userId = "2"
+                    )
+                ),
                 address = "Calle 789, Ciudad",
                 location = Location(3.4567, 8.9012),
-                rating = 1.2
             )
         )
     }
@@ -138,7 +175,7 @@ class PlacesViewModel: ViewModel() {
         return _places.value.find { it.id == id }
     }
 
-    // filtrar por estados y query
+    // ADMIN - Muestra todos los lugares
     fun filterPlaces(
         status: Status?,
         query: String
@@ -149,13 +186,14 @@ class PlacesViewModel: ViewModel() {
         }
     }
 
-    fun filterPlacesCategoryQuery(
+    // USER - No muestra los rechazados ni pendientes por aprobar
+    fun filterPlacesUserCategoryQuery(
         category: Category?,
         query: String
     ): List<Place> {
         return _places.value.filter { place ->
-            (category == null || place.category == category) &&
-                    (query.isBlank() || place.name.contains(query, ignoreCase = true))
+            ((place.status != Status.REJECTED && place.status != Status.PENDING_FOR_APPROVAL) && (category == null || place.category == category  &&
+                    (query.isBlank() || place.name.contains(query, ignoreCase = true))))
         }
     }
 
@@ -173,7 +211,7 @@ class PlacesViewModel: ViewModel() {
 
     // Buscar lugares por id de usuario
     fun findPlacesByUserModerator(userId: String): List<Place> {
-        return _places.value.filter { it.approvedById == userId }
+        return _places.value.filter { it.handledBy == userId }
     }
 
     fun getPlacesCreatedByUser(userId: String): List<Place> {
@@ -192,5 +230,44 @@ class PlacesViewModel: ViewModel() {
         return todaySchedules.any { schedule ->
             currentTime.isAfter(schedule.startTime) && currentTime.isBefore(schedule.endTime)
         }
+    }
+
+    fun addReview(placeId: String, review: Review){
+        val place = findPlaceById(placeId)
+        if (place != null) {
+            place.reviews = place.reviews + review
+            return
+        }
+        throw IllegalArgumentException("Lugar no encontrado")
+    }
+
+    fun addReport(placeId: String, report: Report){
+        val place = findPlaceById(placeId)
+        if (place != null) {
+            place.reports = place.reports + report
+            if (place.status != Status.REPORTED) {
+                place.status = Status.REPORTED
+            }
+            return
+        }
+        throw IllegalArgumentException("Lugar no encontrado")
+    }
+
+    fun getPlaceRating(placeId: String): Double {
+        val place = findPlaceById(placeId)
+        if (place != null) {
+            val reviews = place.reviews
+            if (reviews.isEmpty()) return 0.0
+            val total = reviews.sumOf { it.rating.toDouble() }
+            return (total / reviews.size).toDouble()
+        }
+        return 0.0
+    }
+
+    fun updatePlaceStatus(placeId: String, newStatus: Status) {
+        val updatedPlaces = _places.value.map { place ->
+            if (place.id == placeId) place.copy(status = newStatus) else place
+        }
+        _places.value = updatedPlaces
     }
 }
