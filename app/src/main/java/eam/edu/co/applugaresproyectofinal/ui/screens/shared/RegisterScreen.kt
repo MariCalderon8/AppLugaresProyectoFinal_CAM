@@ -47,9 +47,6 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
     val usersViewModel = LocalMainViewModel.current.usersViewModel
     val context = LocalContext.current
 
-    var city by remember { mutableStateOf("") }
-    var country by remember { mutableStateOf("") }
-
     var countries = listOf("Colombia", "Peru", "Ecuador", "Venezuela")
     var cities = listOf("Bogotá", "Lima", "Quito", "Caracas")
     var name by remember { mutableStateOf("") }
@@ -59,6 +56,9 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+
+    var city by remember { mutableStateOf(countries[0]) }
+    var country by remember { mutableStateOf(countries[0]) }
 
     val validators = remember { mutableListOf<() -> Boolean>() }
 
@@ -124,8 +124,9 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
             onValueChange = {
                 country = it
             },
+
             icon = Icons.Outlined.Home,
-            supportingText = stringResource(R.string.error_country)
+            supportingText = stringResource(R.string.error_country),
         )
 
         DropdownMenu(
@@ -135,7 +136,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                 city = it
             },
             icon = Icons.Outlined.Place,
-            supportingText = stringResource(R.string.error_city)
+            supportingText = stringResource(R.string.error_city),
         )
 
         InputText(
@@ -221,13 +222,16 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                 usersViewModel.addUser(
                     User(
                         id = UUID.randomUUID().toString(),
-                        name = name + " " + lastname,
+                        name = name,
+                        lastName = lastname,
+                        completeName = "$name $lastname",
                         username = username,
                         phoneNumber = phoneNumber,
                         email = email,
                         password = password,
                         city = city,
                         role = Role.USER,
+                        country = country
                     )
                 )
                 Toast.makeText(

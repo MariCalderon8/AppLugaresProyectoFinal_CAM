@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -26,60 +27,52 @@ import eam.edu.co.applugaresproyectofinal.R
 fun CommentItem(
     userName: String,
     comment: String,
+    subject: String = "",
     rating: Int,
     avatar: Int = R.drawable.avatar,
     canAnswer: Boolean = false,
-    onSend: (String) -> Unit = {}
+    onClick: () -> Unit = {}
 ) {
-    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-        Image(
-            painter = painterResource(id = avatar),
-            contentDescription = "Avatar",
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-        )
-        Spacer(Modifier.width(12.dp))
-        Column {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = userName, color = Color.Black)
-                Spacer(Modifier.width(8.dp))
-                RatingBar(rating = rating)
-            }
-            Text(text = comment, color = Color.Gray)
-        }
-    }
-    if (canAnswer) {
-
-        val showReplyBox = remember { mutableStateOf(false) }
-
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .clickable {
-                    showReplyBox.value = !showReplyBox.value
+    Column(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        Row {
+            Image(
+                painter = painterResource(id = avatar),
+                contentDescription = "Avatar",
+                modifier = Modifier.size(40.dp).clip(CircleShape)
+            )
+            Spacer(Modifier.width(12.dp))
+            Column {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = userName, color = Color.Black)
+                    Spacer(Modifier.width(8.dp))
+                    RatingBar(rating = rating)
                 }
-                .padding(end = 12.dp)
-        ) {
-            IconButton(
-                onClick = { showReplyBox.value = !showReplyBox.value },
-            ) {
+                if (subject.isNotEmpty()){
+                    Text(text = subject, color = Color.Black)}
+                Text(text = comment, color = Color.Gray)
+            }
+        }
 
+        if (canAnswer) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(start = 52.dp, top = 6.dp)
+                    .clickable { onClick() }
+            ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.label_answer),
                     tint = Color.Gray
                 )
+                Spacer(Modifier.width(4.dp))
+                Text(
+                    text = stringResource(R.string.label_answer),
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
-            Text(
-                text = stringResource(R.string.label_answer), color = Color.Gray
-            )
-        }
-        if (showReplyBox.value) {
-            ReplyBox(onSend = {
-                onSend
-            })
         }
     }
 }
+

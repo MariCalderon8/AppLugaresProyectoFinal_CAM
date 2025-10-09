@@ -1,5 +1,6 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.admin
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -47,6 +48,7 @@ import eam.edu.co.applugaresproyectofinal.model.getColor
 import eam.edu.co.applugaresproyectofinal.ui.components.PlaceCard
 import eam.edu.co.applugaresproyectofinal.ui.components.TagChip
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 import eam.edu.co.applugaresproyectofinal.utils.formatSchedules
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,10 +60,14 @@ fun ModerationScreen(
     val placesViewModel = LocalMainViewModel.current.placesViewModel
     var searchQuery by remember { mutableStateOf("") }
     var selectedStatus by remember { mutableStateOf<Status?>(Status.PENDING_FOR_APPROVAL) }
+    val usersViewModel = LocalMainViewModel.current.usersViewModel
+
+    val context = LocalContext.current
+    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"]?: return)
 
     val places by placesViewModel.places.collectAsState()
 
-    val filteredPlaces = placesViewModel.filterPlaces(selectedStatus, searchQuery)
+    val filteredPlaces by remember(places, selectedStatus, searchQuery) { mutableStateOf(placesViewModel.filterPlaces(selectedStatus, searchQuery)) }
 
     val statuses = listOf(
         null,
@@ -216,7 +222,7 @@ fun ModerationScreen(
                 )
             }
         } else {
-            // Lista de tarjetas (dummy)
+            // Lista de tarjetas
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier.fillMaxSize()
@@ -227,33 +233,7 @@ fun ModerationScreen(
                             title = place.name,
                             category = place.category.displayName,
                             address = place.address,
-                            createdBy = place.createdById,
-                            date = formatSchedules(context = LocalContext.current, place.scheduleList),
-                            imageUrl = place.images[0],
-                            onCardClick = {
-                                onNavigateToPlaceDetail(place.id)
-                            },
-                            iconContent = {
-                                TagChip(
-                                    text = place.status.description,
-                                    backgroundColor = place.status.getColor(),
-                                )
-                            },
-                            iconContentPadding = 4,
-                            showActions = true,
-                            onCancelClick = {},
-                            onConfirmClick = {},
-                            labelConfirmBtn = stringResource(R.string.btn_moderator_approve),
-                            confirmBtnColor = Color(0xFF6A1B9A),
-                            labelCancelBtn = stringResource(R.string.btn_moderator_reject),
-                            cancelBtnColor = Color.White
-                        )
-                    } else if (place.status == Status.REPORTED){
-                        PlaceCard(
-                            title = place.name,
-                            category = place.category.displayName,
-                            address = place.address,
-                            createdBy = place.createdById,
+                            createdBy = usersViewModel.findUserById(place.createdById)!!.completeName,
                             date = formatSchedules(context = LocalContext.current, place.scheduleList),
                             imageUrl = place.images[0],
                             onCardClick = {
@@ -268,8 +248,45 @@ fun ModerationScreen(
                             iconContentPadding = 4,
                             showActions = true,
                             onCancelClick = {
+                                placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.REJECTED)
+                                Toast.makeText(context, "Lugar rechazado", Toast.LENGTH_SHORT).show()
                             },
                             onConfirmClick = {
+                                placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.APPROVED)
+                                Toast.makeText(context, "Lugar aprobado", Toast.LENGTH_SHORT).show()
+                            },
+                            labelConfirmBtn = stringResource(R.string.btn_moderator_approve),
+                            confirmBtnColor = colorResource(R.color.primary),
+                            labelCancelBtn = stringResource(R.string.btn_moderator_reject),
+                            cancelBtnColor = Color.White
+                        )
+                    } else if (place.status == Status.REPORTED){
+                        PlaceCard(
+                            title = place.name,
+                            category = place.category.displayName,
+                            address = place.address,
+                            createdBy = usersViewModel.findUserById(place.createdById)!!.completeName,
+                            date = formatSchedules(context = LocalContext.current, place.scheduleList),
+                            imageUrl = place.images[0],
+                            onCardClick = {
+                                onNavigateToPlaceDetail(place.id)
+                            },
+                            iconContent = {
+                                TagChip(
+                                    text = place.status.description,
+                                    backgroundColor = place.status.getColor(),
+                                )
+                            },
+                            iconContentPadding = 4,
+                            showActions = true,
+                            onCancelClick = {
+                                placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.APPROVED)
+                                Toast.makeText(context, "Reporte ignorado, el lugar pasará a aprobado", Toast.LENGTH_SHORT).show()
+                            },
+                            onConfirmClick = {
+                                placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.REJECTED)
+                                Toast.makeText(context, "Lugar rechazado", Toast.LENGTH_SHORT).show()
+
                             },
                             labelCancelBtn = stringResource(R.string.label_ignore_report),
                             labelConfirmBtn = stringResource(R.string.label_reject_place),
@@ -280,7 +297,7 @@ fun ModerationScreen(
                             title = place.name,
                             category = place.category.displayName,
                             address = place.address,
-                            createdBy = place.createdById,
+                            createdBy = usersViewModel.findUserById(place.createdById)!!.completeName,
                             date = formatSchedules(context = LocalContext.current, place.scheduleList),
                             imageUrl = place.images[0],
                             onCardClick = {

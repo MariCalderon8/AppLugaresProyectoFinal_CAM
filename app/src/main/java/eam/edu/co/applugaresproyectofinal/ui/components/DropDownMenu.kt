@@ -36,6 +36,7 @@ fun DropdownMenu(
     icon: ImageVector ?= null,
     supportingText: String,
     fontSize: Int = 14,
+    initialValue: String = "",
     textColor: Color = colorResource(R.color.gray_text),
     iconColor: Color = colorResource(R.color.gray_text),
     borderColors: androidx.compose.material3.TextFieldColors = OutlinedTextFieldDefaults.colors(
@@ -45,7 +46,7 @@ fun DropdownMenu(
 ) {
 
     var expanded by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf("") }
+    var selectedItem by remember { mutableStateOf(initialValue) }
 
     var isError by rememberSaveable { mutableStateOf(false) }
 

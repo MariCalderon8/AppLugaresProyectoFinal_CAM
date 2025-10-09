@@ -30,6 +30,8 @@
     <string name="label_phonenumber">Numero de teléfono</string>
     <string name="label_confirm_password">Confirmar contraseña</string>
     <string name="label_username">Nombre de usuario</string>
+    <string name="label_choose_city">Seleccione una ciudad</string>
+    <string name="label_choose_country">Seleccione un valor</string>
 
     <string name="error_name">El nombre es obligatorio</string>
     <string name="error_lastname">El apellido es obligatorio</string>
@@ -123,6 +125,8 @@
     <string name="placeholder_comment_description">Escribe tu experiencia...</string>
     <string name="label_comment_rating">Calificación</string>
     <string name="btn_submit_comment">Enviar comentario</string>
+    <string name="error_rating_required">La calificación es obligatoria</string>
+    <string name="label_success_review_sent">Comentario agregado</string>
 
     <!-- NEW REPORT -->
     <string name="title_new_report">Nuevo reporte</string>
@@ -153,6 +157,10 @@
     <string name="label_creator_date">15 de enero del 2025</string>
     <string name="sample_comment_user">Sebastian</string>
     <string name="sample_comment_text">Un café con un ambiente encantador, excelente servicio y un sabor inigualable.</string>
+    <string name="label_creator_msg">Respuesta del creador</string>
+    <string name="label_review_already_replied">Ya has respondido este comentario</string>
+    <string name="label_success_report_sent">Lugar reportado con éxito</string>
+
 
     <!-- LEAVE WITHOUT SAVING ALERT -->
     <string name="title_lose_changes">¿Salir sin guardar?</string>
@@ -195,7 +203,9 @@
     <string name="error_fill_all_fields">Por favor rellene todos los campos obligatorios</string>
     <string name="error_field_required">Campo requerido</string>
 
-    <string name="label_success_report_sent">Lugar reportado con éxito</string>
 
+    <!-- FAVORITES -->
+    <string name="label_no_favorites">No tienes lugares favoritos guardados</string>
+    <string name="label_no_favorites_description">Explora y encuentra tu próximo lugar favorito</string>
 
 </resources>

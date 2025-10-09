@@ -1,7 +1,7 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
-import SignOutButton
 import android.util.Patterns
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -21,18 +21,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Logout
-import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material.icons.outlined.PersonPin
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,20 +37,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import eam.edu.co.applugaresproyectofinal.R
+import eam.edu.co.applugaresproyectofinal.model.Role
+import eam.edu.co.applugaresproyectofinal.model.User
 import eam.edu.co.applugaresproyectofinal.ui.components.AlertDialogCustom
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
 import eam.edu.co.applugaresproyectofinal.ui.components.DropdownMenu
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
+import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 
 @Composable
 fun UpdateProfileScreen(
@@ -69,16 +65,23 @@ fun UpdateProfileScreen(
             .verticalScroll(rememberScrollState()),
     ) {
 
-        var city by remember { mutableStateOf("") }
-        var country by remember { mutableStateOf("") }
+        val context = LocalContext.current
+
+        var showDialog by remember { mutableStateOf(false) }
+        val usersViewModel = LocalMainViewModel.current.usersViewModel
+        val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"] ?: return)
 
         var countries = listOf("Colombia", "Peru", "Ecuador", "Venezuela")
         var cities = listOf("Bogotá", "Lima", "Quito", "Caracas")
-        var name by remember { mutableStateOf("Pepito") } // Datos de usuario quemados de ejemplo
-        var lastname by remember { mutableStateOf("Perez") }
-        var phoneNumber by remember { mutableStateOf("2345678") }
+        var name by remember { mutableStateOf(user?.name ?: "") }
+        var lastname by remember { mutableStateOf(user?.lastName ?: "") }
+        var phoneNumber by remember { mutableStateOf(user?.phoneNumber ?: "") }
+        var username by remember { mutableStateOf(user?.username ?: "") }
 
-        var showDialog by remember { mutableStateOf(false) }
+        var city by remember { mutableStateOf("") }
+        var country by remember { mutableStateOf("") }
+
+        val validators = remember { mutableListOf<() -> Boolean>() }
 
         BackHandler(enabled = true) {
             showDialog = true
@@ -149,8 +152,8 @@ fun UpdateProfileScreen(
                     name.isBlank()
                 },
                 icon = Icons.Outlined.Person,
-                modifier = Modifier.weight(1f)
-
+                modifier = Modifier.weight(1f),
+                registerValidator = { validator -> validators.add(validator) }
             )
 
             InputText(
@@ -163,10 +166,24 @@ fun UpdateProfileScreen(
                 onValidate = {
                     lastname.isBlank()
                 },
-                modifier = Modifier.weight(1f)
-
+                modifier = Modifier.weight(1f),
+                registerValidator = { validator -> validators.add(validator) }
             )
         }
+
+        InputText(
+            value = username,
+            label = stringResource(R.string.label_username),
+            supportingText = stringResource(R.string.error_usernname),
+            onValueChange = {
+                username = it
+            },
+            onValidate = {
+                username.isBlank()
+            },
+            icon = Icons.Outlined.PersonPin,
+            registerValidator = { validator -> validators.add(validator) }
+        )
 
         DropdownMenu(
             label = stringResource(R.string.label_register_country),
@@ -175,7 +192,8 @@ fun UpdateProfileScreen(
                 country = it
             },
             icon = Icons.Outlined.Home,
-            supportingText = stringResource(R.string.error_country)
+            supportingText = stringResource(R.string.error_country),
+            initialValue = user?.country ?: ""
         )
 
         DropdownMenu(
@@ -185,7 +203,8 @@ fun UpdateProfileScreen(
                 city = it
             },
             icon = Icons.Outlined.Place,
-            supportingText = stringResource(R.string.error_city)
+            supportingText = stringResource(R.string.error_city),
+            initialValue = user?.city ?: ""
         )
 
         InputText(
@@ -199,12 +218,41 @@ fun UpdateProfileScreen(
                 phoneNumber.isBlank() || !Patterns.PHONE.matcher(phoneNumber).matches()
             },
             icon = Icons.Outlined.Phone,
-            modifier = Modifier
+            modifier = Modifier,
+            registerValidator = { validator -> validators.add(validator) }
         )
 
         CustomButton(
             text = stringResource(R.string.btn_save_changes),
             onClick = {
+                var hasErrors = false
+                validators.forEach { validator ->
+                    if (validator()) hasErrors = true
+                }
+
+                if (hasErrors) {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.error_fill_all_fields),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@CustomButton
+                }
+                val updatedUser = User(
+                    id = user?.id ?: "",
+                    username = username,
+                    email = user?.email ?: "",
+                    password = user?.password ?: "",
+                    phoneNumber = phoneNumber,
+                    city = if (city.isBlank()) user?.city ?: "" else city,
+                    name = name,
+                    lastName = lastname,
+                    completeName = "$name $lastname",
+                    profilePicture = user?.profilePicture,
+                    role = user?.role ?: Role.USER,
+                    country = if (country.isBlank()) user?.country ?: "" else country,
+                )
+                usersViewModel.updateUser(updatedUser)
                 onNavitageToProfile()
             },
             isLarge = true

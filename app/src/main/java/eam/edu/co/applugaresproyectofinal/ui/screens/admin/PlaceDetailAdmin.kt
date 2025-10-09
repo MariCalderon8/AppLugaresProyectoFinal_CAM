@@ -1,5 +1,6 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.admin
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,8 @@ import eam.edu.co.applugaresproyectofinal.ui.components.ReportedBadge
 import eam.edu.co.applugaresproyectofinal.ui.components.TagChip
 import eam.edu.co.applugaresproyectofinal.ui.components.TopBarCustom
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
+import eam.edu.co.applugaresproyectofinal.utils.formatDate
 import eam.edu.co.applugaresproyectofinal.utils.formatSchedules
 import kotlin.math.roundToInt
 
@@ -62,6 +65,10 @@ fun PlaceDetailAdminScreen(
     val place = placesViewModel.findPlaceById(placeId) ?: return
     val usersViewModel = LocalMainViewModel.current.usersViewModel
     val creator = usersViewModel.findUserById(place.createdById)?: return
+
+    val context = LocalContext.current
+    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"]?: return)
+
 
     Column(
         modifier = Modifier
@@ -108,7 +115,7 @@ fun PlaceDetailAdminScreen(
         }
 
         if (place.status == Status.REPORTED) {
-            ReportedBadge(15, modifier = Modifier.fillMaxWidth())
+            ReportedBadge(placesViewModel.countReports(placeId), modifier = Modifier.fillMaxWidth())
             Spacer(Modifier.height(8.dp))
 
         }
@@ -161,9 +168,9 @@ fun PlaceDetailAdminScreen(
         Spacer(Modifier.height(16.dp))
 
         CreatorInfoCard(
-            name = creator.name,
+            name = creator.completeName,
             username = creator.username,
-            date = stringResource(R.string.label_creator_date),
+            date = formatDate(place.creationDate),
             avatar = R.drawable.avatar
         )
 
@@ -173,11 +180,16 @@ fun PlaceDetailAdminScreen(
         Spacer(Modifier.height(12.dp))
 
         if (place.status != Status.REJECTED) {
-            CommentItem(
-                userName = stringResource(R.string.sample_comment_user),
-                comment = stringResource(R.string.sample_comment_text),
-                rating = 5
-            )
+            place.reviews.forEach { review ->
+                CommentItem(
+                    userName = usersViewModel.findUserById(review.userId)?.completeName ?: "",
+                    subject = review.subject,
+                    comment = review.description,
+                    rating = review.rating.toInt(),
+                    canAnswer = false,
+
+                )
+            }
         }
 
         if (place.status == Status.REPORTED) {
@@ -197,7 +209,7 @@ fun PlaceDetailAdminScreen(
                 ReportCard(
                     reason = report.subject,
                     description = report.description,
-                    reporterName = reporter.name,
+                    reporterName = reporter.completeName,
                     reporterUsername = reporter.username
                 )
             }
@@ -213,7 +225,11 @@ fun PlaceDetailAdminScreen(
             ) {
 
                 Button(
-                    onClick = onBack,
+                    onClick = {
+                        placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.REJECTED)
+                        Toast.makeText(context, "Lugar rechazado", Toast.LENGTH_SHORT).show()
+                        onBack()
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(R.color.status_rejected),
                         contentColor = Color.White
@@ -227,7 +243,11 @@ fun PlaceDetailAdminScreen(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Button(
-                    onClick = onBack,
+                    onClick = {
+                        placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.APPROVED)
+                        Toast.makeText(context, "Reporte ignorado, el lugar pasará a aprobado", Toast.LENGTH_SHORT).show()
+                        onBack
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                         contentColor = Color.Black
@@ -253,7 +273,11 @@ fun PlaceDetailAdminScreen(
             ) {
 
                 Button(
-                    onClick = onBack,
+                    onClick = {
+                        placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.APPROVED)
+                        Toast.makeText(context, "Lugar aprobado", Toast.LENGTH_SHORT).show()
+                        onBack()
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(R.color.primary),
                         contentColor = Color.White
@@ -268,7 +292,11 @@ fun PlaceDetailAdminScreen(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Button(
-                    onClick = onBack,
+                    onClick = {
+                        placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.REJECTED)
+                        Toast.makeText(context, "Lugar rechazado", Toast.LENGTH_SHORT).show()
+                        onBack()
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                         contentColor = Color.Black

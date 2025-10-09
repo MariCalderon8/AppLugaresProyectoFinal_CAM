@@ -49,6 +49,7 @@ import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Category
 import eam.edu.co.applugaresproyectofinal.ui.components.PlaceCard
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 import eam.edu.co.applugaresproyectofinal.utils.formatSchedules
 import kotlinx.coroutines.launch
 
@@ -59,7 +60,7 @@ fun MapScreen(
     onSelectedCategory: (Category?) -> Unit = {},
     onNavigateToPlaceDetail: (String) -> Unit,
 ) {
-
+    val context = LocalContext.current
     val placesViewModel = LocalMainViewModel.current.placesViewModel
     val usersViewModel = LocalMainViewModel.current.usersViewModel
 
@@ -68,6 +69,7 @@ fun MapScreen(
 
     val scaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
+    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"]?: return)
 
     val filteredPlaces = placesViewModel.filterPlacesUserCategoryQuery(selectedCategory, searchQuery)
 
@@ -118,22 +120,24 @@ fun MapScreen(
                             title = place.name,
                             category = place.category.displayName,
                             address = place.description,
-                            createdBy = usersViewModel.findUserById(place.createdById)?.name
+                            createdBy = usersViewModel.findUserById(place.createdById)?.completeName
                                 ?: "Desconocido",
                             date = formatSchedules(context = LocalContext.current, place.scheduleList),
                             iconContent = {
-                                Box(
-                                    modifier = Modifier
-                                        .size(32.dp)
-                                        .background(Color.White, CircleShape)
-                                        .padding(6.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Favorite,
-                                        contentDescription = null,
-                                        tint = Color.Black
-                                    )
+                                if (user != null && user.favorites.contains(place.id)){
+                                    Box(
+                                        modifier = Modifier
+                                            .size(32.dp)
+                                            .background(Color.White, CircleShape)
+                                            .padding(6.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Favorite,
+                                            contentDescription = null,
+                                            tint = Color.Black
+                                        )
+                                    }
                                 }
                             },
                             imageUrl = place.images[0],

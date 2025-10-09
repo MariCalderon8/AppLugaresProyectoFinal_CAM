@@ -68,6 +68,7 @@ class PlacesViewModel: ViewModel() {
                         userId = "3"
                     )
                 ),
+                creationDate = LocalDateTime.of(2024,5, 5,12,30)
             ),
             Place(
                 id = UUID.randomUUID().toString(),
@@ -189,9 +190,10 @@ class PlacesViewModel: ViewModel() {
     // USER - No muestra los rechazados ni pendientes por aprobar
     fun filterPlacesUserCategoryQuery(
         category: Category?,
-        query: String
-    ): List<Place> {
-        return _places.value.filter { place ->
+        query: String,
+        placesList: List<Place> = _places.value,
+        ): List<Place> {
+        return placesList.filter { place ->
             ((place.status != Status.REJECTED && place.status != Status.PENDING_FOR_APPROVAL) && (category == null || place.category == category  &&
                     (query.isBlank() || place.name.contains(query, ignoreCase = true))))
         }
@@ -258,10 +260,17 @@ class PlacesViewModel: ViewModel() {
         if (place != null) {
             val reviews = place.reviews
             if (reviews.isEmpty()) return 0.0
-            val total = reviews.sumOf { it.rating.toDouble() }
-            return (total / reviews.size).toDouble()
+            val total = reviews.sumOf { it.rating }
+            return (total / reviews.size)
         }
         return 0.0
+    }
+
+    fun moderatePlace(placeId: String, moderatorId: String, newStatus: Status) {
+        val updatedPlaces = _places.value.map { place ->
+            if (place.id == placeId) place.copy(status = newStatus, handledBy = moderatorId) else place
+        }
+        _places.value = updatedPlaces
     }
 
     fun updatePlaceStatus(placeId: String, newStatus: Status) {
@@ -269,5 +278,17 @@ class PlacesViewModel: ViewModel() {
             if (place.id == placeId) place.copy(status = newStatus) else place
         }
         _places.value = updatedPlaces
+    }
+
+    fun countReports(placeId: String): Int {
+        val place = findPlaceById(placeId)
+        if (place != null) {
+            return place.reports.map { it.userId }.distinct().size
+        }
+        return 0
+    }
+
+    fun getUserFavoritePlaces(placesId: List<String>):List<Place>{
+        return _places.value.filter { place -> place.id in placesId }
     }
 }

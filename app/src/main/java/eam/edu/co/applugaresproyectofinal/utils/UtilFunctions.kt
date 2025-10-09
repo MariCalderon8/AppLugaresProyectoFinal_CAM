@@ -5,6 +5,7 @@ import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Schedule
 
 import java.time.DayOfWeek
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -47,4 +48,10 @@ fun formatSchedules(context: Context, schedules: List<Schedule>): String {
     }
 
     return parts.joinToString(" | ")
+}
+
+// Formato de fecha "'día' de 'mes' del 'año'"
+fun formatDate(dateTime: LocalDateTime): String {
+    val formatter = DateTimeFormatter.ofPattern("d 'de' MMMM 'de' yyyy", Locale("es", "ES"))
+    return dateTime.format(formatter)
 }

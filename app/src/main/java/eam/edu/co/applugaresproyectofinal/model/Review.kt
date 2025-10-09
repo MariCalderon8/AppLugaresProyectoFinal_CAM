@@ -7,5 +7,6 @@ data class Review(
     val userId: String,
     val subject: String,
     val description: String,
-    val rating: Double
+    val rating: Double,
+    var creatorReply: String? = null
 )

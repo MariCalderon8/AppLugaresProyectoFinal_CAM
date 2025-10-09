@@ -1,5 +1,7 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -34,6 +36,7 @@ import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.ui.components.*
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
 import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
+import eam.edu.co.applugaresproyectofinal.utils.formatDate
 import eam.edu.co.applugaresproyectofinal.utils.formatSchedules
 import kotlin.math.roundToInt
 
@@ -46,13 +49,36 @@ fun PlaceDetailScreen(
     onNavigateToNewReport: (String) -> Unit,
 ) {
     val context = LocalContext.current
+
     val placesViewModel = LocalMainViewModel.current.placesViewModel
     val place = placesViewModel.findPlaceById(placeId) ?: return
     val usersViewModel = LocalMainViewModel.current.usersViewModel
-    val user =
-        usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"] ?: return)
+    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"] ?: return)
+    var userFavoritesList = user?.favorites ?: emptyList()
+
     val creator = usersViewModel.findUserById(place.createdById) ?: return
     val isOpen = placesViewModel.isPlaceOpen(place.scheduleList)
+
+    var replyToReview by remember { mutableStateOf<String?>(null) } // 👈 id del comentario al que se responde
+    var replyText by remember { mutableStateOf("") }
+
+    val isCreator = user?.id == place.createdById
+
+    BackHandler(enabled = replyToReview != null) {
+        replyToReview = null
+    }
+
+    fun toggleFavorite(userId: String, placeId: String) {
+        if (user != null) {
+            if (userFavoritesList.contains(placeId)) {
+                userFavoritesList = userFavoritesList - placeId
+            } else {
+                userFavoritesList = userFavoritesList + placeId
+            }
+            usersViewModel.updateUserFavoriteList(user.id, userFavoritesList)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopBarCustom(
@@ -70,6 +96,27 @@ fun PlaceDetailScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            if (replyToReview != null) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                ) {
+                    ReplyBox(
+                        onSend = { text ->
+                            if (text.isNotBlank()) {
+                                // Guarda la respuesta
+                                val review = place.reviews.find { it.id == replyToReview }
+                                review?.creatorReply = text
+                                replyText = ""
+                                replyToReview = null
+                            }
+                        }
+                    )
+                }
+            }
         }
     ) { innerPadding ->
         Column(
@@ -105,7 +152,7 @@ fun PlaceDetailScreen(
                     if (user.id == place.createdById) {
                         TagChip(text = stringResource(R.string.label_created_by_me))
                     } else {
-                        var isFavorite by remember { mutableStateOf(false) } // FALTA ORGANIZAR CON EL ESTADO REAL
+                        var isFavorite by remember { mutableStateOf(user.favorites.contains(place.id)) }
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -114,12 +161,12 @@ fun PlaceDetailScreen(
                             IconButton(
                                 modifier = Modifier.size(30.dp),
                                 onClick = {
-                                    isFavorite = !isFavorite
                                     if (isFavorite) {
-                                        // AGREGAR A FAVORITOS
+                                        toggleFavorite(user.id, place.id)
                                     } else {
-                                        // QUITAR DE FAVORITOS
+                                        toggleFavorite(user.id, place.id)
                                     }
+                                    isFavorite = user.favorites.contains(place.id)
                                 }
                             ) {
                                 Icon(
@@ -211,9 +258,9 @@ fun PlaceDetailScreen(
             Spacer(Modifier.height(16.dp))
 
             CreatorInfoCard(
-                name = creator.name,
+                name = creator.completeName,
                 username = creator.username,
-                date = stringResource(R.string.label_creator_date),
+                date = formatDate(place.creationDate),
                 avatar = R.drawable.avatar
             )
 
@@ -222,12 +269,48 @@ fun PlaceDetailScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            CommentItem(
-                userName = stringResource(R.string.sample_comment_user),
-                comment = stringResource(R.string.sample_comment_text),
-                rating = 5,
-                canAnswer = if (user != null) user.id == place.createdById else false,
-            )
+            val toastMsg = stringResource(R.string.label_review_already_replied)
+            val replyBackgroundColor = colorResource(R.color.gray_more_light)
+
+            place.reviews.forEach { review ->
+                CommentItem(
+                    userName = usersViewModel.findUserById(review.userId)?.completeName ?: "",
+                    subject = review.subject,
+                    comment = review.description,
+                    rating = review.rating.toInt(),
+                    canAnswer = isCreator,
+                    onClick = {
+                        if (review.creatorReply.isNullOrBlank()) {
+                            replyToReview = review.id
+                        } else {
+                            Toast.makeText(
+                                context,
+                                toastMsg,
+                                Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+                )
+
+                // Si ya existe una respuesta
+                if (!review.creatorReply.isNullOrBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 56.dp, bottom = 8.dp)
+                            .background(replyBackgroundColor, RoundedCornerShape(8.dp))
+                            .padding(10.dp)
+                    ) {
+                        Text(
+                            text = "${stringResource(R.string.label_creator_msg)}: ${review.creatorReply}",
+                            color = Color.Gray,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+
+                HorizontalDivider(thickness = 1.dp, color = Color(0xFFE0E0E0))
+            }
 
             if (user != null && user.id != place.createdById) {
                 Spacer(Modifier.height(12.dp))
@@ -247,7 +330,8 @@ fun PlaceDetailScreen(
                 }
             }
 
-            Spacer(Modifier.height(30.dp))
+            Spacer(Modifier.height(20.dp))
         }
+
     }
 }

@@ -142,7 +142,7 @@ fun PlaceCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Button(
-                        onClick = { onConfirmClick },
+                        onClick = onConfirmClick,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = confirmBtnColor,
                             contentColor = Color.White
@@ -157,7 +157,7 @@ fun PlaceCard(
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Button(
-                        onClick = { onCancelClick },
+                        onClick = onCancelClick,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = cancelBtnColor,
                             contentColor = Color.Black
