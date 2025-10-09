@@ -193,16 +193,6 @@ fun PlaceDetailAdminScreen(
         }
 
         if (place.status == Status.REPORTED) {
-            Button(
-                onClick = {},
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ){
-                Text(
-                    text = stringResource(R.string.label_show_more)
-                )
-            }
-
-            Spacer(Modifier.height(16.dp))
 
             place.reports.forEach { report ->
                 val reporter = usersViewModel.findUserById(report.userId) ?: return@forEach
@@ -310,7 +300,5 @@ fun PlaceDetailAdminScreen(
                 }
             }
         }
-
-        Spacer(Modifier.height(100.dp))
     }
 }
