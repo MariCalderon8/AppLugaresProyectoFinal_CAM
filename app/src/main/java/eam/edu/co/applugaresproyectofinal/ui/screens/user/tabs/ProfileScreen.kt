@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -28,6 +29,8 @@ import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.ui.components.SectionHeader
 import eam.edu.co.applugaresproyectofinal.ui.components.StatsCard
 import eam.edu.co.applugaresproyectofinal.ui.components.ProfileOptionItem
+import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 
 @Composable
 fun ProfileScreen(
@@ -36,6 +39,12 @@ fun ProfileScreen(
     onToggleDarkModeClick: () -> Unit = {},
     onSignOutClick: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+
+    val usersViewModel = LocalMainViewModel.current.usersViewModel
+    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"] ?: return)
+    val placesViewModel = LocalMainViewModel.current.placesViewModel
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -70,17 +79,17 @@ fun ProfileScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             StatsCard(
-                count = 2,
+                count = placesViewModel.countPlacesCreatedByUser(user?.id?:""),
                 label = stringResource(R.string.label_places_created),
                 modifier = Modifier.weight(1f)
             )
             StatsCard(
-                count = 12,
+                count = user?.favorites?.size?:0,
                 label = stringResource(R.string.label_favorite_places),
                 modifier = Modifier.weight(1f)
             )
             StatsCard(
-                count = 55,
+                count = placesViewModel.countCommentsPlace(user?.id?:""),
                 label = stringResource(R.string.label_received_comments),
                 modifier = Modifier.weight(1f)
             )

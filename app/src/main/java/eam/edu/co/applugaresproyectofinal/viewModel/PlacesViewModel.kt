@@ -194,7 +194,7 @@ class PlacesViewModel: ViewModel() {
         placesList: List<Place> = _places.value,
         ): List<Place> {
         return placesList.filter { place ->
-            ((place.status != Status.REJECTED && place.status != Status.PENDING_FOR_APPROVAL) && (category == null || place.category == category  &&
+            ((place.status != Status.REJECTED && place.status != Status.PENDING_FOR_APPROVAL) && ((category == null || place.category == category)  &&
                     (query.isBlank() || place.name.contains(query, ignoreCase = true))))
         }
     }
@@ -290,5 +290,23 @@ class PlacesViewModel: ViewModel() {
 
     fun getUserFavoritePlaces(placesId: List<String>):List<Place>{
         return _places.value.filter { place -> place.id in placesId }
+    }
+
+    fun countCommentsPlace(userId: String):Int{
+        var count = 0
+        val userPlaces =  _places.value.filter { it.createdById == userId }
+        for (place in userPlaces) {
+            count += place.reviews.size
+        }
+        return count
+    }
+
+    fun countPlacesCreatedByUser(userId: String):Int {
+        var count = 0
+        val userPlaces =  _places.value.filter { it.createdById == userId }
+        for (place in userPlaces) {
+            count++
+        }
+        return count
     }
 }
