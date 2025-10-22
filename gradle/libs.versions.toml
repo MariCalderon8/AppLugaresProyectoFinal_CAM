@@ -16,6 +16,7 @@ uiTest = "1.9.1"
 foundationLayout = "1.9.1"
 ui = "1.9.2"
 coilCompose = "2.7.0"
+mapsCompose = "11.11.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,6 +41,8 @@ androidx-ui-test = { group = "androidx.compose.ui", name = "ui-test", version.re
 androidx-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose"}
+maps-android= { module = "com.mapbox.maps:android", version.ref = "mapsCompose"}
+maps-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapsCompose"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

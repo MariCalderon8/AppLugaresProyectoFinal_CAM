@@ -44,7 +44,7 @@ class PlacesViewModel: ViewModel() {
                 scheduleList = schedule + Schedule(DayOfWeek.SUNDAY, LocalTime.of(20, 0), LocalTime.of(23, 0)),
                 category = Category.CAFETERIA,
                 address = "Calle 123, Ciudad",
-                location = Location(1.2345, 6.7890),
+                location = Location(4.533169, -75.673897),
                 reviews = listOf(
                     Review(
                         id = UUID.randomUUID().toString(),
@@ -84,7 +84,7 @@ class PlacesViewModel: ViewModel() {
                 reviews = emptyList(),
                 reports = emptyList(),
                 address = "Avenida 456, Ciudad",
-                location = Location(2.3456, 7.8901),
+                location = Location(4.543210, -75.663421),
             ),
             Place(
                 id = UUID.randomUUID().toString(),
@@ -100,7 +100,7 @@ class PlacesViewModel: ViewModel() {
                 reviews = emptyList(),
                 reports = emptyList(),
                 address = "Calle 789, Ciudad",
-                location = Location(3.4567, 8.9012),
+                location = Location(4.541685, -75.675312),
             ),
             Place(
                 id = UUID.randomUUID().toString(),
@@ -116,7 +116,7 @@ class PlacesViewModel: ViewModel() {
                 reviews = emptyList(),
                 reports = emptyList(),
                 address = "Calle 789, Ciudad",
-                location = Location(3.4567, 8.9012),
+                location = Location(4.554901, -75.655042),
             ),
             Place(
                 id = UUID.randomUUID().toString(),
@@ -151,7 +151,7 @@ class PlacesViewModel: ViewModel() {
                     )
                 ),
                 address = "Calle 789, Ciudad",
-                location = Location(3.4567, 8.9012),
+                location = Location(4.540726, -75.667563),
             )
         )
     }

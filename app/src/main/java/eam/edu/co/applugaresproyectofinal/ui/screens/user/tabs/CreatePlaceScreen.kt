@@ -28,6 +28,7 @@ import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Store
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -37,10 +38,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +58,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mapbox.geojson.Point
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Category
 import eam.edu.co.applugaresproyectofinal.model.Location
@@ -63,6 +67,7 @@ import eam.edu.co.applugaresproyectofinal.model.Schedule
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
 import eam.edu.co.applugaresproyectofinal.ui.components.Label
+import eam.edu.co.applugaresproyectofinal.ui.components.Map
 import eam.edu.co.applugaresproyectofinal.ui.components.ScheduleDialog
 import eam.edu.co.applugaresproyectofinal.ui.components.ScheduleItemCard
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
@@ -84,6 +89,8 @@ fun CreatePlaceScreen(
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
 
     val placeViewModel = LocalMainViewModel.current.placesViewModel
+    val places by placeViewModel.places.collectAsState()
+
 
     var showDialogSchedule by remember { mutableStateOf(false) }
     var schedules = remember { mutableStateListOf<Schedule>() }
@@ -95,6 +102,9 @@ fun CreatePlaceScreen(
 
     val usersViewModel = LocalMainViewModel.current.usersViewModel
     val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"] ?: return)
+
+    var clickedPoint by rememberSaveable { mutableStateOf<Point?>(null) }
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -381,13 +391,15 @@ fun CreatePlaceScreen(
                 isRequired = true,
             )
 
-            Image(
-                painter = painterResource(id = R.drawable.map),
-                contentDescription = stringResource(R.string.label_place_location),
+            Map(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
-                    .clip(RoundedCornerShape(12.dp))
+                    .height(400.dp),
+                activateClick = true,
+                onMapClickListener = { l ->
+                    clickedPoint = l
+                }
+
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -413,28 +425,31 @@ fun CreatePlaceScreen(
                         return@CustomButton
                     }
 
-                    val place = Place(
-                        id = UUID.randomUUID().toString(),
-                        images = listOf(
-                            "https://validuspharma.com/wp-content/uploads/2019/06/nologo.png"
-                        ),
-                        description = description,
-                        name = placeName,
-                        scheduleList = schedules,
-                        phone = phoneNumber,
-                        category = selectedCategory!!,
-                        reviews = emptyList(),
-                        createdById = user?.id?:"",
-                        handledBy = null,
-                        status = eam.edu.co.applugaresproyectofinal.model.Status.PENDING_FOR_APPROVAL,
-                        reports = emptyList(),
-                        address = address,
-                        location = Location(0.0, 0.0),
-                    )
+                    if(clickedPoint != null) {
+                        val place = Place(
+                            id = UUID.randomUUID().toString(),
+                            images = listOf(
+                                "https://validuspharma.com/wp-content/uploads/2019/06/nologo.png"
+                            ),
+                            description = description,
+                            name = placeName,
+                            scheduleList = schedules,
+                            phone = phoneNumber,
+                            category = selectedCategory!!,
+                            reviews = emptyList(),
+                            createdById = user?.id ?: "",
+                            handledBy = null,
+                            status = eam.edu.co.applugaresproyectofinal.model.Status.PENDING_FOR_APPROVAL,
+                            reports = emptyList(),
+                            address = address,
+                            location = Location(clickedPoint!!.latitude(), clickedPoint!!.latitude()),
+                        )
 
-                    placeViewModel.addPlace(place)
-                    onNavigateToMyPlaces()
-
+                        placeViewModel.addPlace(place)
+                        onNavigateToMyPlaces()
+                    }else{
+//                        Mostrar alerta de que falta la ubicación
+                    }
                 },
                 isLarge = true
             )

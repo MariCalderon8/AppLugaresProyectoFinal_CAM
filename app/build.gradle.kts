@@ -61,6 +61,8 @@ dependencies {
     implementation(libs.androidx.foundation.layout)
     implementation(libs.ui)
     implementation(libs.coil.compose)
+    implementation(libs.maps.android)
+    implementation(libs.maps.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
