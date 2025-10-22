@@ -48,7 +48,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
     val context = LocalContext.current
 
     var countries = listOf("Colombia", "Peru", "Ecuador", "Venezuela")
-    var cities = listOf("Bogotá", "Lima", "Quito", "Caracas")
+    var cities = listOf("Armenia", "Buenavista", "Calarcá", "Circasia", "Córdoba", "Filandia", "Génova", "La Tebaida", "Montenegro", "Pijao", "Quimbaya", "Salento");
     var name by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var lastname by remember { mutableStateOf("") }
@@ -117,17 +117,17 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
             icon = Icons.Outlined.PersonPin,
             registerValidator = { validator -> validators.add(validator) }
         )
-
-        DropdownMenu(
-            label = stringResource(R.string.label_register_country),
-            list = countries,
-            onValueChange = {
-                country = it
-            },
-
-            icon = Icons.Outlined.Home,
-            supportingText = stringResource(R.string.error_country),
-        )
+//
+//        DropdownMenu(
+//            label = stringResource(R.string.label_register_country),
+//            list = countries,
+//            onValueChange = {
+//                country = it
+//            },
+//
+//            icon = Icons.Outlined.Home,
+//            supportingText = stringResource(R.string.error_country),
+//        )
 
         DropdownMenu(
             label = stringResource(R.string.label_register_city),
@@ -231,7 +231,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                         password = password,
                         city = city,
                         role = Role.USER,
-                        country = country
+                        country = "Colombia"
                     )
                 )
                 Toast.makeText(

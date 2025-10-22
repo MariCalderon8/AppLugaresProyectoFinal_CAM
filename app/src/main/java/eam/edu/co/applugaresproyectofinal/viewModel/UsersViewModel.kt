@@ -25,7 +25,7 @@ class UsersViewModel: ViewModel() {
                 email = "user@example.com",
                 password = "12345",
                 phoneNumber = "12345",
-                city = "Bogotá",
+                city = "Montenegro",
                 profilePicture = null,
                 role = Role.USER,
                 favorites = emptyList(),
@@ -40,7 +40,7 @@ class UsersViewModel: ViewModel() {
                 email = "admin@example.com",
                 password = "12345",
                 phoneNumber = "12345",
-                city = "Medellín",
+                city = "Armenia",
                 profilePicture = "https://example.com/maria.jpg",
                 role = Role.ADMIN,
                 favorites = emptyList()
@@ -54,7 +54,7 @@ class UsersViewModel: ViewModel() {
                 email = "carlos.lopez@example.com",
                 password = "12345",
                 phoneNumber = "12345",
-                city = "Cali",
+                city = "Salento",
                 profilePicture = null,
                 role = Role.USER,
                 favorites = emptyList()

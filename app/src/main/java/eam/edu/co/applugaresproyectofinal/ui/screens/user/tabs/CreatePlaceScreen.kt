@@ -66,6 +66,7 @@ import eam.edu.co.applugaresproyectofinal.ui.components.Label
 import eam.edu.co.applugaresproyectofinal.ui.components.ScheduleDialog
 import eam.edu.co.applugaresproyectofinal.ui.components.ScheduleItemCard
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 import java.util.UUID
 
 
@@ -92,6 +93,8 @@ fun CreatePlaceScreen(
     var categoryError by remember { mutableStateOf(false) }
     var scheduleError by remember { mutableStateOf(false) }
 
+    val usersViewModel = LocalMainViewModel.current.usersViewModel
+    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"] ?: return)
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -421,7 +424,7 @@ fun CreatePlaceScreen(
                         phone = phoneNumber,
                         category = selectedCategory!!,
                         reviews = emptyList(),
-                        createdById = "1",
+                        createdById = user?.id?:"",
                         handledBy = null,
                         status = eam.edu.co.applugaresproyectofinal.model.Status.PENDING_FOR_APPROVAL,
                         reports = emptyList(),

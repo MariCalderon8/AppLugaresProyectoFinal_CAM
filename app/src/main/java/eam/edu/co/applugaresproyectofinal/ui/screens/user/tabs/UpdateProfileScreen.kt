@@ -72,7 +72,7 @@ fun UpdateProfileScreen(
         val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"] ?: return)
 
         var countries = listOf("Colombia", "Peru", "Ecuador", "Venezuela")
-        var cities = listOf("Bogotá", "Lima", "Quito", "Caracas")
+        var cities = listOf("Armenia", "Buenavista", "Calarcá", "Circasia", "Córdoba", "Filandia", "Génova", "La Tebaida", "Montenegro", "Pijao", "Quimbaya", "Salento");
         var name by remember { mutableStateOf(user?.name ?: "") }
         var lastname by remember { mutableStateOf(user?.lastName ?: "") }
         var phoneNumber by remember { mutableStateOf(user?.phoneNumber ?: "") }
@@ -185,16 +185,16 @@ fun UpdateProfileScreen(
             registerValidator = { validator -> validators.add(validator) }
         )
 
-        DropdownMenu(
-            label = stringResource(R.string.label_register_country),
-            list = countries,
-            onValueChange = {
-                country = it
-            },
-            icon = Icons.Outlined.Home,
-            supportingText = stringResource(R.string.error_country),
-            initialValue = user?.country ?: ""
-        )
+//        DropdownMenu(
+//            label = stringResource(R.string.label_register_country),
+//            list = countries,
+//            onValueChange = {
+//                country = it
+//            },
+//            icon = Icons.Outlined.Home,
+//            supportingText = stringResource(R.string.error_country),
+//            initialValue = user?.country ?: ""
+//        )
 
         DropdownMenu(
             label = stringResource(R.string.label_register_city),
@@ -250,7 +250,8 @@ fun UpdateProfileScreen(
                     completeName = "$name $lastname",
                     profilePicture = user?.profilePicture,
                     role = user?.role ?: Role.USER,
-                    country = if (country.isBlank()) user?.country ?: "" else country,
+//                    country = if (country.isBlank()) user?.country ?: "" else country,
+                    country = "Colombia"
                 )
                 usersViewModel.updateUser(updatedUser)
                 onNavitageToProfile()
