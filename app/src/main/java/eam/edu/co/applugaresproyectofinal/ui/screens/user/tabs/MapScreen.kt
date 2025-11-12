@@ -161,7 +161,10 @@ fun MapScreen(
         Box(modifier = modifier.fillMaxSize()) {
             Map(
                 places = places,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                onMarkerClick = { placeId ->
+                    onNavigateToPlaceDetail(placeId)
+                }
             )
         Column(
             modifier = Modifier

@@ -39,6 +39,7 @@ import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 import eam.edu.co.applugaresproyectofinal.utils.formatDate
 import eam.edu.co.applugaresproyectofinal.utils.formatSchedules
 import kotlin.math.roundToInt
+import eam.edu.co.applugaresproyectofinal.ui.components.Map
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -246,14 +247,19 @@ fun PlaceDetailScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            Image(
-                painter = painterResource(id = R.drawable.map),
-                contentDescription = stringResource(R.string.label_place_location),
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(250.dp)
                     .clip(RoundedCornerShape(12.dp))
-            )
+            ){
+                Map(
+                    places = listOf(place),
+                    activateClick = false,
+                    followUserLocation = false,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
 
             Spacer(Modifier.height(16.dp))
 

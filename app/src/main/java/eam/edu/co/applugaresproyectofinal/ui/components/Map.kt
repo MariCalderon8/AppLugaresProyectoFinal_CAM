@@ -34,7 +34,9 @@ fun Map(
     modifier: Modifier = Modifier,
     places: List<Place> = emptyList(),
     activateClick: Boolean = false,
-    onMapClickListener: (Point) -> Unit = {}
+    onMapClickListener: (Point) -> Unit = {},
+    onMarkerClick: (String) -> Unit = {},
+    followUserLocation: Boolean = true
 ){
 
     val context = LocalContext.current
@@ -51,8 +53,18 @@ fun Map(
     var mapViewportState = rememberMapViewportState {
         setCameraOptions {
             zoom(4.0)
-            center(Point.fromLngLat(-75.6491181, 4.4687891) )
+            center(Point.fromLngLat(4.4687891, -75.6491181 ) )
             pitch(45.0)
+        }
+    }
+
+    if (places.size == 1) {
+        val place = places.first()
+        LaunchedEffect(place) {
+            mapViewportState.setCameraOptions {
+                center(Point.fromLngLat(place.location.longitude, place.location.latitude))
+                zoom(15.0)
+            }
         }
     }
 
@@ -73,7 +85,7 @@ fun Map(
         }
     ){
 
-        if (hasPermission) {
+        if (hasPermission  && followUserLocation) {
             MapEffect(key1 = "follow_puck") { mapView ->
                 mapView.location.updateSettings {
                     locationPuck = createDefault2DPuck(withBearing = true)
@@ -85,6 +97,7 @@ fun Map(
                 mapViewportState.transitionToFollowPuckState(
                     defaultTransitionOptions = DefaultViewportTransitionOptions.Builder().maxDurationMs(0).build()
                 )
+
             }
         }
 
@@ -98,7 +111,11 @@ fun Map(
 
             places.forEach { place ->
                 PointAnnotation(
-                    point = Point.fromLngLat(place.location.longitude, place.location.latitude)
+                    point = Point.fromLngLat(place.location.longitude, place.location.latitude),
+                    onClick = {
+                        onMarkerClick(place.id)
+                        true
+                    }
                 ) {
                     iconImage = marker
                 }

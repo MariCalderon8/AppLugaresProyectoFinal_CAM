@@ -390,18 +390,24 @@ fun CreatePlaceScreen(
                 text = stringResource(R.string.label_place_location),
                 isRequired = true,
             )
-
-            Map(
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(400.dp),
-                activateClick = true,
-                onMapClickListener = { l ->
-                    clickedPoint = l
-                }
+                    .height(250.dp)
+                    .clip(RoundedCornerShape(12.dp))
+            ){
+                Map(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(400.dp),
+                    activateClick = true,
+                    onMapClickListener = { l ->
+                        clickedPoint = l
+                    }
 
-            )
-
+                )
+            }
+            
             Spacer(modifier = Modifier.height(10.dp))
 
             CustomButton(
