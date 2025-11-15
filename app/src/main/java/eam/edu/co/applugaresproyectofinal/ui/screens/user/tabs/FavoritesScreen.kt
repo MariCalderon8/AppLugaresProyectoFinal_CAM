@@ -25,6 +25,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,10 +56,15 @@ fun FavoritesScreen(
     val usersViewModel = LocalMainViewModel.current.usersViewModel
     var selectedCategory by remember { mutableStateOf<Category?>(null) }
     val context = LocalContext.current
-    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"]?: return)
+    val userId = SharedPrefsUtil.getPreferences(context)["userId"] ?: return
+    usersViewModel.findUserById(userId)
+
+    val currentUser by usersViewModel.currentUser.collectAsState()
+
     var userPlaces: List<Place> = emptyList()
-    if (user != null ) {
-        userPlaces = placesViewModel.getUserFavoritePlaces(user.favorites?.toList() ?: emptyList())
+    if (currentUser != null ) {
+        val favoritesIds = currentUser?.favorites ?: emptyList()
+        userPlaces = placesViewModel.getUserFavoritePlaces(favoritesIds)
     }
     val filteredPlaces = placesViewModel.filterPlacesUserCategoryQuery(selectedCategory, "", userPlaces)
 
@@ -161,8 +167,8 @@ fun FavoritesScreen(
                         title = place.name,
                         category = place.category.displayName,
                         address = place.description,
-                        createdBy = usersViewModel.findUserById(place.createdById)?.completeName
-                            ?: "Desconocido",
+                        createdBy = usersViewModel.users.value
+                            .find { it.id == place.createdById }?.completeName ?: "Desconocido",
                         date = formatSchedules(context = LocalContext.current, place.scheduleList),
                         iconContent = {
                             Box(

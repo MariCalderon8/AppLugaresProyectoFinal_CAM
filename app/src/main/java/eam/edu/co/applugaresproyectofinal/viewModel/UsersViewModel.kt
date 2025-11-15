@@ -1,92 +1,154 @@
 package eam.edu.co.applugaresproyectofinal.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import eam.edu.co.applugaresproyectofinal.model.Role
 import eam.edu.co.applugaresproyectofinal.model.User
+import eam.edu.co.applugaresproyectofinal.utils.RequestResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import java.util.UUID
 
-class UsersViewModel: ViewModel() {
-    private val _users = MutableStateFlow(emptyList<User>())
+class UsersViewModel : ViewModel() {
+
+    private val db = Firebase.firestore
+
+    private val _userResult = MutableStateFlow<RequestResult?>(null)
+    val userResult: StateFlow<RequestResult?> = _userResult.asStateFlow()
+
+    private val _currentUser = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> = _currentUser
+
+    private val _users = MutableStateFlow<List<User>>(emptyList())
     val users: StateFlow<List<User>> = _users.asStateFlow()
 
     init {
-        loadUsers()
-    }
-    private fun loadUsers() {
-        _users.value = listOf(
-            User(
-                id = "1",
-                name = "Juan",
-                lastName = "Pérez",
-                completeName = "Juan Pérez",
-                username = "juanp",
-                email = "user@example.com",
-                password = "12345",
-                phoneNumber = "12345",
-                city = "Montenegro",
-                profilePicture = null,
-                role = Role.USER,
-                favorites = emptyList(),
-
-            ),
-            User(
-                id = "2",
-                name = "María",
-                lastName = "Gómez",
-                completeName = "María Gómez",
-                username = "mariag",
-                email = "admin@example.com",
-                password = "12345",
-                phoneNumber = "12345",
-                city = "Armenia",
-                profilePicture = "https://example.com/maria.jpg",
-                role = Role.ADMIN,
-                favorites = emptyList()
-            ),
-            User(
-                id = "3",
-                name = "Carlos",
-                lastName = "López",
-                completeName = "Carlos López",
-                username = "carlitos",
-                email = "carlos.lopez@example.com",
-                password = "12345",
-                phoneNumber = "12345",
-                city = "Salento",
-                profilePicture = null,
-                role = Role.USER,
-                favorites = emptyList()
-            )
-        )
+        loadUsersFromFirestore()
     }
 
-    // Crear usuario
-    fun addUser(user: User) {
-        _users.value = _users.value + user
-    }
+    private fun loadUsersFromFirestore() {
+        db.collection("users").addSnapshotListener { snapshot, error ->
+            if (error != null || snapshot == null) return@addSnapshotListener
 
-    // Editar usuario
-    fun updateUser(user: User) {
-        _users.value = _users.value.map { if (it.id == user.id) user else it }
-    }
-
-    fun updateUserFavoriteList(userId: String, placesList: List<String>) {
-        val user = _users.value.find { it.id == userId }
-        if (user != null) {
-            user.favorites = placesList
-
+            _users.value = snapshot.documents.mapNotNull { doc ->
+                doc.toObject(User::class.java)?.apply { id = doc.id }
+            }
         }
     }
 
-    // Buscar usuario por ID
-    fun findUserById(id: String): User? {
-        return _users.value.find { it.id == id }
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            _userResult.value = RequestResult.Loading
+
+            if (email.isBlank() || password.isBlank()) {
+                _userResult.value = RequestResult.Failure("Por favor complete todos los campos")
+                return@launch
+            }
+
+            _userResult.value = runCatching { loginFirebase(email, password) }
+                .fold(
+                    onSuccess = { user ->
+                        _currentUser.value = user
+                        RequestResult.Success("Login exitoso")
+                    },
+                    onFailure = { e ->
+                        RequestResult.Failure(e.message ?: "Error en el login")
+                    }
+                )
+        }
     }
 
-    // Login simple (usuario + contraseña)
-    fun login(email: String, password: String): User? {
-        return _users.value.find { it.email == email && it.password == password }
+    private suspend fun loginFirebase(email: String, password: String): User {
+        val snapshot = db.collection("users")
+            .whereEqualTo("email", email)
+            .whereEqualTo("password", password)
+            .get()
+            .await()
+
+        if (snapshot.documents.isEmpty()) {
+            throw Exception("Correo o contraseña incorrectos")
+        }
+
+        val doc = snapshot.documents.first()
+        return doc.toObject(User::class.java)!!.apply { id = doc.id }
     }
+
+    fun addUser(user: User) {
+        viewModelScope.launch {
+            _userResult.value = RequestResult.Loading
+            try {
+                addUserFirebase(user)
+                _userResult.value = RequestResult.Success("Usuario registrado correctamente")
+            } catch (e: Exception) {
+                _userResult.value = RequestResult.Failure(e.message ?: "Error registrando usuario")
+            }
+        }
+    }
+
+    private suspend fun addUserFirebase(user: User) {
+        val id = UUID.randomUUID().toString()
+        user.id = id
+        db.collection("users").document(id).set(user).await()
+    }
+
+    fun updateUserFavoriteList(userId: String, newFavoritesList: List<String>) {
+        viewModelScope.launch {
+            try {
+                db.collection("users")
+                    .document(userId)
+                    .update("favorites", newFavoritesList)
+                    .await()
+
+                _currentUser.value = _currentUser.value?.copy(favorites = newFavoritesList)
+            } catch (e: Exception) {
+                println("Error actualizando favoritos: ${e.message}")
+            }
+        }
+    }
+
+    fun resetOperationResult() {
+        _userResult.value = null
+    }
+
+    fun logout() {
+        _currentUser.value = null
+        _userResult.value = null
+    }
+
+    fun findUserById(userId: String) {
+        viewModelScope.launch {
+            val doc = db.collection("users").document(userId).get().await()
+            if (doc.exists()) {
+                _currentUser.value = doc.toObject(User::class.java)?.apply { id = doc.id }
+            }
+        }
+    }
+
+    fun updateUser(user: User) {
+        viewModelScope.launch {
+            _userResult.value = RequestResult.Loading
+
+            try {
+                db.collection("users")
+                    .document(user.id)
+                    .set(user)
+                    .await()
+
+                // Actualizar el usuario actual en memoria
+                _currentUser.value = user
+
+                _userResult.value = RequestResult.Success("Perfil actualizado correctamente")
+            } catch (e: Exception) {
+                _userResult.value = RequestResult.Failure(
+                    e.message ?: "Error actualizando el usuario"
+                )
+            }
+        }
+    }
+
 }

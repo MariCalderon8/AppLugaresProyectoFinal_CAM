@@ -30,6 +30,7 @@ import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -69,14 +70,17 @@ fun UpdateProfileScreen(
 
         var showDialog by remember { mutableStateOf(false) }
         val usersViewModel = LocalMainViewModel.current.usersViewModel
-        val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"] ?: return)
+        val userId = SharedPrefsUtil.getPreferences(context)["userId"] ?: return
+        usersViewModel.findUserById(userId)
+        val currentUser by usersViewModel.currentUser.collectAsState()
+
 
         var countries = listOf("Colombia", "Peru", "Ecuador", "Venezuela")
         var cities = listOf("Armenia", "Buenavista", "Calarcá", "Circasia", "Córdoba", "Filandia", "Génova", "La Tebaida", "Montenegro", "Pijao", "Quimbaya", "Salento");
-        var name by remember { mutableStateOf(user?.name ?: "") }
-        var lastname by remember { mutableStateOf(user?.lastName ?: "") }
-        var phoneNumber by remember { mutableStateOf(user?.phoneNumber ?: "") }
-        var username by remember { mutableStateOf(user?.username ?: "") }
+        var name by remember { mutableStateOf(currentUser?.name ?: "") }
+        var lastname by remember { mutableStateOf(currentUser?.lastName ?: "") }
+        var phoneNumber by remember { mutableStateOf(currentUser?.phoneNumber ?: "") }
+        var username by remember { mutableStateOf(currentUser?.username ?: "") }
 
         var city by remember { mutableStateOf("") }
         var country by remember { mutableStateOf("") }
@@ -204,7 +208,7 @@ fun UpdateProfileScreen(
             },
             icon = Icons.Outlined.Place,
             supportingText = stringResource(R.string.error_city),
-            initialValue = user?.city ?: ""
+            initialValue = currentUser?.city ?: ""
         )
 
         InputText(
@@ -239,17 +243,16 @@ fun UpdateProfileScreen(
                     return@CustomButton
                 }
                 val updatedUser = User(
-                    id = user?.id ?: "",
+                    id = currentUser?.id ?: "",
                     username = username,
-                    email = user?.email ?: "",
-                    password = user?.password ?: "",
+                    email = currentUser?.email ?: "",
+                    password = currentUser?.password ?: "",
                     phoneNumber = phoneNumber,
-                    city = if (city.isBlank()) user?.city ?: "" else city,
+                    city = if (city.isBlank()) currentUser?.city ?: "" else city,
                     name = name,
                     lastName = lastname,
-                    completeName = "$name $lastname",
-                    profilePicture = user?.profilePicture,
-                    role = user?.role ?: Role.USER,
+                    profilePicture = currentUser?.profilePicture,
+                    role = currentUser?.role ?: Role.USER,
 //                    country = if (country.isBlank()) user?.country ?: "" else country,
                     country = "Colombia"
                 )

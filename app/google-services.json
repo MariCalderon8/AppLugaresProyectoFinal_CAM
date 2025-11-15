@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "52469347602",
+    "project_id": "applugares-ee000",
+    "storage_bucket": "applugares-ee000.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:52469347602:android:afccd21e17507ce97b2fcb",
+        "android_client_info": {
+          "package_name": "eam.edu.co.applugaresproyectofinal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxBMFP0KaJ0jA32IYIUE2mcArOxABq0bU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

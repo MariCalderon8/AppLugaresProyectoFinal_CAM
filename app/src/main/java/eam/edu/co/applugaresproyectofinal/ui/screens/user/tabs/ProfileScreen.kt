@@ -18,6 +18,8 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +44,10 @@ fun ProfileScreen(
     val context = LocalContext.current
 
     val usersViewModel = LocalMainViewModel.current.usersViewModel
-    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"] ?: return)
+    val userId = SharedPrefsUtil.getPreferences(context)["userId"] ?: return
+    usersViewModel.findUserById(userId)
+    val currentUser by usersViewModel.currentUser.collectAsState()
+
     val placesViewModel = LocalMainViewModel.current.placesViewModel
 
     Column(
@@ -79,17 +84,17 @@ fun ProfileScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             StatsCard(
-                count = placesViewModel.countPlacesCreatedByUser(user?.id?:""),
+                count = placesViewModel.countPlacesCreatedByUser(currentUser?.id?:""),
                 label = stringResource(R.string.label_places_created),
                 modifier = Modifier.weight(1f)
             )
             StatsCard(
-                count = user?.favorites?.size?:0,
+                count = currentUser?.favorites?.size?:0,
                 label = stringResource(R.string.label_favorite_places),
                 modifier = Modifier.weight(1f)
             )
             StatsCard(
-                count = placesViewModel.countCommentsPlace(user?.id?:""),
+                count = placesViewModel.countCommentsPlace(currentUser?.id?:""),
                 label = stringResource(R.string.label_received_comments),
                 modifier = Modifier.weight(1f)
             )

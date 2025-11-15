@@ -28,6 +28,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,13 +44,16 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Role
 import eam.edu.co.applugaresproyectofinal.ui.components.AlertDialogCustom
 import eam.edu.co.applugaresproyectofinal.ui.components.CheckBox
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
+import eam.edu.co.applugaresproyectofinal.ui.components.OperationResultHandler
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.RequestResult
 import java.util.UUID
 
 @Composable
@@ -62,6 +67,8 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") } // Estado mutable
     val context = LocalContext.current
     var isChecked by remember { mutableStateOf(false) }
+
+    val userResult by usersViewModel.userResult.collectAsState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -135,16 +142,19 @@ fun LoginScreen(
                 isLarge = true,
                 onClick = {
                     val user = usersViewModel.login(email, password)
-                    if (user != null) {
-                        onNavigateToHome(user.id, user.role)
-                        Toast.makeText(context, context.getString(R.string.usermsg_welcome), Toast.LENGTH_SHORT)
-                            .show()
-                    } else {
-                        Toast.makeText(context, context.getString(R.string.usermsg_not_valid_credentials), Toast.LENGTH_SHORT)
-                            .show()
-                    }
                 }
             )
+
+            LaunchedEffect(userResult) {
+                if (userResult is RequestResult.Success) {
+                    val user = usersViewModel.currentUser.value
+                    if (user != null) {
+                        onNavigateToHome(user.id, user.role)
+                    }
+                    usersViewModel.resetOperationResult()
+                }
+            }
+
 
         }
 

@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +38,9 @@ import eam.edu.co.applugaresproyectofinal.model.User
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
 import eam.edu.co.applugaresproyectofinal.ui.components.DropdownMenu
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
+import eam.edu.co.applugaresproyectofinal.ui.components.OperationResultHandler
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,6 +64,9 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
     var country by remember { mutableStateOf(countries[0]) }
 
     val validators = remember { mutableListOf<() -> Boolean>() }
+
+    val userResult by usersViewModel.userResult.collectAsState()
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -117,17 +123,6 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
             icon = Icons.Outlined.PersonPin,
             registerValidator = { validator -> validators.add(validator) }
         )
-//
-//        DropdownMenu(
-//            label = stringResource(R.string.label_register_country),
-//            list = countries,
-//            onValueChange = {
-//                country = it
-//            },
-//
-//            icon = Icons.Outlined.Home,
-//            supportingText = stringResource(R.string.error_country),
-//        )
 
         DropdownMenu(
             label = stringResource(R.string.label_register_city),
@@ -221,10 +216,8 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
 
                 usersViewModel.addUser(
                     User(
-                        id = UUID.randomUUID().toString(),
                         name = name,
                         lastName = lastname,
-                        completeName = "$name $lastname",
                         username = username,
                         phoneNumber = phoneNumber,
                         email = email,
@@ -234,14 +227,24 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                         country = "Colombia"
                     )
                 )
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.usermsg_register_succesfully),
-                    Toast.LENGTH_SHORT
-                ).show()
-                onNavigateToLogin()
             },
             isLarge = true
+        )
+
+        OperationResultHandler(
+            result = userResult,
+            onSuccess = {
+                onNavigateToLogin()
+                usersViewModel.resetOperationResult()
+            },
+            onFailure = {
+                usersViewModel.resetOperationResult()
+                Toast.makeText(
+                    context,
+                    "Error al crear el usuario",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         )
 
         Spacer(modifier = Modifier.height(60.dp))

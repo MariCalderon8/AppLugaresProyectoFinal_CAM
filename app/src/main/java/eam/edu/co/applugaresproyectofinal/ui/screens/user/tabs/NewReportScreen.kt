@@ -34,7 +34,10 @@ fun NewReportScreen(
     val usersViewModel = LocalMainViewModel.current.usersViewModel
     val context = LocalContext.current
 
-    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"]?: return)
+    val userId = SharedPrefsUtil.getPreferences(context)["userId"] ?: return
+    usersViewModel.findUserById(userId)
+    val currentUser by usersViewModel.currentUser.collectAsState()
+
 
     var subject by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -114,7 +117,7 @@ fun NewReportScreen(
             CustomButton(
                 text = stringResource(R.string.btn_submit_report),
                 onClick = {
-                    if (user == null) return@CustomButton
+                    if (currentUser == null) return@CustomButton
 
                     var hasErrors = false
                     validators.forEach { validator ->
@@ -140,7 +143,7 @@ fun NewReportScreen(
                         id = UUID.randomUUID().toString(),
                         subject = subject,
                         description = description,
-                        userId = user.id
+                        userId = currentUser!!.id
                     ))
 
                     onBack()

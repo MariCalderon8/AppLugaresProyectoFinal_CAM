@@ -63,7 +63,10 @@ fun ModerationScreen(
     val usersViewModel = LocalMainViewModel.current.usersViewModel
 
     val context = LocalContext.current
-    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"]?: return)
+    val userId = SharedPrefsUtil.getPreferences(context)["userId"] ?: return
+    usersViewModel.findUserById(userId)
+    val currentUser by usersViewModel.currentUser.collectAsState()
+
 
     val places by placesViewModel.places.collectAsState()
 
@@ -76,6 +79,7 @@ fun ModerationScreen(
         Status.REJECTED,
         Status.REPORTED
     )
+
 
     Column(
         modifier = Modifier
@@ -233,7 +237,9 @@ fun ModerationScreen(
                             title = place.name,
                             category = place.category.displayName,
                             address = place.address,
-                            createdBy = usersViewModel.findUserById(place.createdById)!!.completeName,
+                            createdBy = usersViewModel.users.value
+                                .find { it.id == place.createdById }
+                                ?.completeName ?: "Desconocido",
                             date = formatSchedules(context = LocalContext.current, place.scheduleList),
                             imageUrl = place.images[0],
                             onCardClick = {
@@ -248,11 +254,11 @@ fun ModerationScreen(
                             iconContentPadding = 4,
                             showActions = true,
                             onCancelClick = {
-                                placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.REJECTED)
+                                placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.REJECTED)
                                 Toast.makeText(context, "Lugar rechazado", Toast.LENGTH_SHORT).show()
                             },
                             onConfirmClick = {
-                                placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.APPROVED)
+                                placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.APPROVED)
                                 Toast.makeText(context, "Lugar aprobado", Toast.LENGTH_SHORT).show()
                             },
                             labelConfirmBtn = stringResource(R.string.btn_moderator_approve),
@@ -265,7 +271,9 @@ fun ModerationScreen(
                             title = place.name,
                             category = place.category.displayName,
                             address = place.address,
-                            createdBy = usersViewModel.findUserById(place.createdById)!!.completeName,
+                            createdBy = usersViewModel.users.value
+                                .find { it.id == place.createdById }
+                                ?.completeName ?: "Desconocido",
                             date = formatSchedules(context = LocalContext.current, place.scheduleList),
                             imageUrl = place.images[0],
                             onCardClick = {
@@ -280,11 +288,11 @@ fun ModerationScreen(
                             iconContentPadding = 4,
                             showActions = true,
                             onCancelClick = {
-                                placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.APPROVED)
+                                placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.APPROVED)
                                 Toast.makeText(context, "Reporte ignorado, el lugar pasará a aprobado", Toast.LENGTH_SHORT).show()
                             },
                             onConfirmClick = {
-                                placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.REJECTED)
+                                placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.REJECTED)
                                 Toast.makeText(context, "Lugar rechazado", Toast.LENGTH_SHORT).show()
 
                             },
@@ -297,7 +305,9 @@ fun ModerationScreen(
                             title = place.name,
                             category = place.category.displayName,
                             address = place.address,
-                            createdBy = usersViewModel.findUserById(place.createdById)!!.completeName,
+                            createdBy = usersViewModel.users.value
+                                .find { it.id == place.createdById }
+                                ?.completeName ?: "Desconocido",
                             date = formatSchedules(context = LocalContext.current, place.scheduleList),
                             imageUrl = place.images[0],
                             onCardClick = {

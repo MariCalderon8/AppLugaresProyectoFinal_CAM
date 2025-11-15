@@ -2,7 +2,6 @@ package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -18,6 +17,7 @@ import androidx.compose.material.icons.outlined.AssignmentLate
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,7 +28,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -52,31 +51,34 @@ fun PlaceDetailScreen(
     val context = LocalContext.current
 
     val placesViewModel = LocalMainViewModel.current.placesViewModel
-    val place = placesViewModel.findPlaceById(placeId) ?: return
+    val places by placesViewModel.places.collectAsState()
+    val place = places.find { it.id == placeId } ?: return
     val usersViewModel = LocalMainViewModel.current.usersViewModel
-    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"] ?: return)
-    var userFavoritesList = user?.favorites ?: emptyList()
+    val userId = SharedPrefsUtil.getPreferences(context)["userId"] ?: return
+    usersViewModel.findUserById(userId)
+    val currentUser by usersViewModel.currentUser.collectAsState()
 
-    val creator = usersViewModel.findUserById(place.createdById) ?: return
+    var userFavoritesList = currentUser?.favorites ?: emptyList()
+    val creator = usersViewModel.users.value.find { it.id == place.createdById } ?: return
     val isOpen = placesViewModel.isPlaceOpen(place.scheduleList)
 
-    var replyToReview by remember { mutableStateOf<String?>(null) } // 👈 id del comentario al que se responde
+    var replyToReview by remember { mutableStateOf<String?>(null) }
     var replyText by remember { mutableStateOf("") }
 
-    val isCreator = user?.id == place.createdById
+    val isCreator = currentUser?.id == place.createdById
 
     BackHandler(enabled = replyToReview != null) {
         replyToReview = null
     }
 
     fun toggleFavorite(userId: String, placeId: String) {
-        if (user != null) {
+        if (currentUser != null) {
             if (userFavoritesList.contains(placeId)) {
                 userFavoritesList = userFavoritesList - placeId
             } else {
                 userFavoritesList = userFavoritesList + placeId
             }
-            usersViewModel.updateUserFavoriteList(user.id, userFavoritesList)
+            usersViewModel.updateUserFavoriteList(currentUser!!.id, userFavoritesList)
         }
     }
 
@@ -110,7 +112,12 @@ fun PlaceDetailScreen(
                             if (text.isNotBlank()) {
                                 // Guarda la respuesta
                                 val review = place.reviews.find { it.id == replyToReview }
-                                review?.creatorReply = text
+                                placesViewModel.addCreatorReply(
+                                    placeId = place.id,
+                                    reviewId = replyToReview!!,
+                                    replyText = text
+                                )
+
                                 replyText = ""
                                 replyToReview = null
                             }
@@ -149,11 +156,11 @@ fun PlaceDetailScreen(
             ) {
                 RatingBar(rating = placesViewModel.getPlaceRating(placeId).roundToInt())
 
-                if (user != null) {
-                    if (user.id == place.createdById) {
+                if (currentUser != null) {
+                    if (currentUser!!.id == place.createdById) {
                         TagChip(text = stringResource(R.string.label_created_by_me))
                     } else {
-                        var isFavorite by remember { mutableStateOf(user.favorites.contains(place.id)) }
+                        var isFavorite by remember { mutableStateOf(currentUser!!.favorites.contains(place.id)) }
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -163,11 +170,11 @@ fun PlaceDetailScreen(
                                 modifier = Modifier.size(30.dp),
                                 onClick = {
                                     if (isFavorite) {
-                                        toggleFavorite(user.id, place.id)
+                                        toggleFavorite(currentUser!!.id, place.id)
                                     } else {
-                                        toggleFavorite(user.id, place.id)
+                                        toggleFavorite(currentUser!!.id, place.id)
                                     }
-                                    isFavorite = user.favorites.contains(place.id)
+                                    isFavorite = currentUser!!.favorites.contains(place.id)
                                 }
                             ) {
                                 Icon(
@@ -280,7 +287,9 @@ fun PlaceDetailScreen(
 
             place.reviews.forEach { review ->
                 CommentItem(
-                    userName = usersViewModel.findUserById(review.userId)?.completeName ?: "",
+                    userName = usersViewModel.users.value
+                        .find { it.id == review.userId }
+                        ?.completeName ?: "",
                     subject = review.subject,
                     comment = review.description,
                     rating = review.rating.toInt(),
@@ -318,7 +327,7 @@ fun PlaceDetailScreen(
                 HorizontalDivider(thickness = 1.dp, color = Color(0xFFE0E0E0))
             }
 
-            if (user != null && user.id != place.createdById) {
+            if (currentUser != null && currentUser!!.id != place.createdById) {
                 Spacer(Modifier.height(12.dp))
                 Button(
                     onClick = {

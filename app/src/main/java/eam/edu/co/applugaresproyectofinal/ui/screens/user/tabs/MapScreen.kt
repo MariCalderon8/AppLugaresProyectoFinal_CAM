@@ -74,7 +74,10 @@ fun MapScreen(
 
     val scaffoldState = rememberBottomSheetScaffoldState()
     val scope = rememberCoroutineScope()
-    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"]?: return)
+    val userId = SharedPrefsUtil.getPreferences(context)["userId"] ?: return
+    usersViewModel.findUserById(userId)
+    val currentUser by usersViewModel.currentUser.collectAsState()
+
 
     val filteredPlaces = placesViewModel.filterPlacesUserCategoryQuery(selectedCategory, searchQuery)
 
@@ -127,11 +130,12 @@ fun MapScreen(
                             title = place.name,
                             category = place.category.displayName,
                             address = place.description,
-                            createdBy = usersViewModel.findUserById(place.createdById)?.completeName
-                                ?: "Desconocido",
+                            createdBy = usersViewModel.users.value
+                                .find { it.id == place.createdById }
+                                ?.completeName ?: "Desconocido",
                             date = formatSchedules(context = LocalContext.current, place.scheduleList),
                             iconContent = {
-                                if (user != null && user.favorites.contains(place.id)){
+                                if (currentUser != null && currentUser!!.favorites.contains(place.id)){
                                     Box(
                                         modifier = Modifier
                                             .size(32.dp)

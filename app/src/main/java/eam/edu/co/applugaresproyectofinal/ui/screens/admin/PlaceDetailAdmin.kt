@@ -27,6 +27,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,12 +64,18 @@ fun PlaceDetailAdminScreen(
     onBack: () -> Unit = {}
 ) {
     val placesViewModel = LocalMainViewModel.current.placesViewModel
-    val place = placesViewModel.findPlaceById(placeId) ?: return
+    val places by placesViewModel.places.collectAsState()
+    val place = places.find { it.id == placeId } ?: return
+
     val usersViewModel = LocalMainViewModel.current.usersViewModel
-    val creator = usersViewModel.findUserById(place.createdById)?: return
+    val creator = usersViewModel.users.value
+        .find { it.id == place.createdById } ?: return
+
 
     val context = LocalContext.current
-    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"]?: return)
+    val userId = SharedPrefsUtil.getPreferences(context)["userId"] ?: return
+    usersViewModel.findUserById(userId)
+    val currentUser by usersViewModel.currentUser.collectAsState()
 
 
     Column(
@@ -182,7 +190,10 @@ fun PlaceDetailAdminScreen(
         if (place.status != Status.REJECTED) {
             place.reviews.forEach { review ->
                 CommentItem(
-                    userName = usersViewModel.findUserById(review.userId)?.completeName ?: "",
+                    userName = usersViewModel.users.value
+                        .find { it.id == review.userId }
+                        ?.completeName ?: "",
+
                     subject = review.subject,
                     comment = review.description,
                     rating = review.rating.toInt(),
@@ -195,7 +206,8 @@ fun PlaceDetailAdminScreen(
         if (place.status == Status.REPORTED) {
 
             place.reports.forEach { report ->
-                val reporter = usersViewModel.findUserById(report.userId) ?: return@forEach
+                val reporter = usersViewModel.users.value
+                    .find { it.id == report.userId } ?: return@forEach
                 ReportCard(
                     reason = report.subject,
                     description = report.description,
@@ -216,7 +228,7 @@ fun PlaceDetailAdminScreen(
 
                 Button(
                     onClick = {
-                        placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.REJECTED)
+                        placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.REJECTED)
                         Toast.makeText(context, "Lugar rechazado", Toast.LENGTH_SHORT).show()
                         onBack()
                     },
@@ -234,7 +246,7 @@ fun PlaceDetailAdminScreen(
 
                 Button(
                     onClick = {
-                        placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.APPROVED)
+                        placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.APPROVED)
                         Toast.makeText(context, "Reporte ignorado, el lugar pasará a aprobado", Toast.LENGTH_SHORT).show()
                         onBack
                     },
@@ -264,7 +276,7 @@ fun PlaceDetailAdminScreen(
 
                 Button(
                     onClick = {
-                        placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.APPROVED)
+                        placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.APPROVED)
                         Toast.makeText(context, "Lugar aprobado", Toast.LENGTH_SHORT).show()
                         onBack()
                     },
@@ -283,7 +295,7 @@ fun PlaceDetailAdminScreen(
 
                 Button(
                     onClick = {
-                        placesViewModel.moderatePlace(place.id, user?.id ?: "", Status.REJECTED)
+                        placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.REJECTED)
                         Toast.makeText(context, "Lugar rechazado", Toast.LENGTH_SHORT).show()
                         onBack()
                     },

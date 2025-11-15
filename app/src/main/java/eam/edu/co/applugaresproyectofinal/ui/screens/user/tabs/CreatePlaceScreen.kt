@@ -101,7 +101,10 @@ fun CreatePlaceScreen(
     var scheduleError by remember { mutableStateOf(false) }
 
     val usersViewModel = LocalMainViewModel.current.usersViewModel
-    val user = usersViewModel.findUserById(SharedPrefsUtil.getPreferences(context)["userId"] ?: return)
+    val userId = SharedPrefsUtil.getPreferences(context)["userId"] ?: return
+    usersViewModel.findUserById(userId)
+    val currentUser by usersViewModel.currentUser.collectAsState()
+
 
     var clickedPoint by rememberSaveable { mutableStateOf<Point?>(null) }
 
@@ -443,12 +446,13 @@ fun CreatePlaceScreen(
                             phone = phoneNumber,
                             category = selectedCategory!!,
                             reviews = emptyList(),
-                            createdById = user?.id ?: "",
+                            createdById = currentUser?.id ?: "",
                             handledBy = null,
                             status = eam.edu.co.applugaresproyectofinal.model.Status.PENDING_FOR_APPROVAL,
                             reports = emptyList(),
                             address = address,
-                            location = Location(clickedPoint!!.latitude(), clickedPoint!!.latitude()),
+                            location = Location(latitude = clickedPoint!!.latitude(), longitude = clickedPoint!!.longitude())
+
                         )
 
                         placeViewModel.addPlace(place)
