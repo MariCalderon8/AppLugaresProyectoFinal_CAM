@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Category
+import eam.edu.co.applugaresproyectofinal.model.Status
 import eam.edu.co.applugaresproyectofinal.ui.components.Map
 import eam.edu.co.applugaresproyectofinal.ui.components.PlaceCard
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
@@ -164,7 +165,7 @@ fun MapScreen(
     ) { innerPadding ->
         Box(modifier = modifier.fillMaxSize()) {
             Map(
-                places = places,
+                places = places.filter { it.status == Status.APPROVED },
                 modifier = Modifier.fillMaxSize(),
                 onMarkerClick = { placeId ->
                     onNavigateToPlaceDetail(placeId)
