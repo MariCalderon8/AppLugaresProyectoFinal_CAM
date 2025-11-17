@@ -1,7 +1,12 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.util.Patterns
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,6 +35,8 @@ import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Store
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -43,6 +51,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -53,11 +62,14 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import coil.compose.AsyncImage
 import com.mapbox.geojson.Point
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Category
@@ -73,6 +85,10 @@ import eam.edu.co.applugaresproyectofinal.ui.components.ScheduleItemCard
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
 import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 import java.util.UUID
+import com.cloudinary.Cloudinary
+import com.cloudinary.utils.ObjectUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,21 +124,47 @@ fun CreatePlaceScreen(
 
     var clickedPoint by rememberSaveable { mutableStateOf<Point?>(null) }
 
+    var image by remember { mutableStateOf("")}
+
+    val config = mapOf(
+        "cloud_name" to "dagstejp0",
+        "api_key" to "469129323531173",
+        "api_secret" to "YFnzJX0A6kjLosI8FAIRlEeJuyM"
+    )
+
+    val scope = rememberCoroutineScope()
+    val cloudinary = Cloudinary(config)
+
+
+    val fileLaucher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ){  uri: Uri? ->
+        uri?.let{
+            scope.launch (Dispatchers.IO){
+                val inputStream = context.contentResolver.openInputStream(it)
+                inputStream?.use{ stream ->
+                    val result = cloudinary.uploader().upload(stream, ObjectUtils.emptyMap())
+                    val imageUrl = result["secure_url"].toString()
+                    image = imageUrl
+
+                }
+            }
+        }
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ){
+        if(it){
+            Toast.makeText(context, "Permiso concedido", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(context, "Permiso denegado", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-//        // 🔹 TopAppBar manual
-//        CenterAlignedTopAppBar(
-//            title = { Text(text = stringResource(R.string.label_create_place)) },
-//            navigationIcon = {
-//                IconButton(onClick = { onBack() }) {
-//                    Icon(
-//                        imageVector = Icons.Outlined.ArrowBack,
-//                        contentDescription = stringResource(R.string.label_back)
-//                    )
-//                }
-//            }
-//        )
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -316,75 +358,114 @@ fun CreatePlaceScreen(
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(
+                Button(
+                    onClick = {
+                       val permissionCheckResult = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                            ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_MEDIA_IMAGES)
+                       }else {
+                           ContextCompat.checkSelfPermission(context, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                       }
+                        if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+                            fileLaucher.launch("image/*")
+                        } else {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                permissionLauncher.launch(android.Manifest.permission.READ_MEDIA_IMAGES)
+                            } else {
+                                permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .size(75.dp)
-                        .padding(4.dp)
-                        .background(
-                            color = colorResource(id = R.color.light_gray),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .drawBehind {
-                            val stroke = Stroke(
-                                width = 3f,
-                                pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f),
-                            )
-                            drawRoundRect(
-                                color = Color.Gray,
-                                size = size,
-                                style = stroke,
-                                cornerRadius = CornerRadius(20f, 20f)
-                            )
-                        },
-                    contentAlignment = Alignment.Center
+                        .padding(4.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colorResource(id = R.color.light_gray),
+                        contentColor = Color.Black
+                    ),
+                    contentPadding = PaddingValues(0.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.AddAPhoto,
-                        contentDescription = stringResource(R.string.add_images),
-                    )
-                }
-
-//                Spacer(modifier = Modifier.width(12.dp))
-
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .padding(4.dp)
-                ) {
-                    // Caja de la imagen
                     Box(
                         modifier = Modifier
-                            .matchParentSize()
-                            .border(
-                                width = 1.dp,
-                                color = Color.Gray,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .background(
-                                color = colorResource(id = R.color.light_gray),
-                                shape = RoundedCornerShape(8.dp),
-                            ),
-
+                            .fillMaxSize()
+                            .drawBehind {
+                                val stroke = Stroke(
+                                    width = 3f,
+                                    pathEffect = PathEffect.dashPathEffect(
+                                        floatArrayOf(10f, 10f),
+                                        0f
+                                    )
+                                )
+                                drawRoundRect(
+                                    color = Color.Gray,
+                                    size = size,
+                                    style = stroke,
+                                    cornerRadius = CornerRadius(20f, 20f)
+                                )
+                            },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.Image,
-                            contentDescription = stringResource(R.string.image_text),
+                            imageVector = Icons.Outlined.AddAPhoto,
+                            contentDescription = stringResource(R.string.add_images),
                         )
                     }
+                }
 
-                    // Botón de eliminar (X)
-                    IconButton(
-                        onClick = { /* acción eliminar imagen */ },
+//                Spacer(modifier = Modifier.width(12.dp))
+                if (image.isNotBlank()) {
+                    Box(
                         modifier = Modifier
-                            .size(20.dp)
-                            .align(Alignment.TopEnd)
-                            .padding(4.dp, 4.dp, 2.dp, 2.dp)
+                            .size(80.dp)
+                            .padding(4.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Cancel,
-                            contentDescription = stringResource(R.string.delete_image_txt),
-                        )
+                        // Caja de la imagen
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .border(
+                                    width = 1.dp,
+                                    color = Color.Gray,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .background(
+                                    color = colorResource(id = R.color.light_gray),
+                                    shape = RoundedCornerShape(8.dp),
+                                ),
+
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (image.isNotBlank()) {
+                                AsyncImage(
+                                    model = image,
+                                    contentDescription = stringResource(R.string.image_text),
+                                    modifier = Modifier
+                                        .fillMaxSize()              // ✔ OCUPA TODO
+                                        .clip(RoundedCornerShape(8.dp)),
+                                    contentScale = ContentScale.Crop   // ✔ YA NO SE VE GRIS
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.Outlined.Image,
+                                    contentDescription = stringResource(R.string.image_text),
+                                )
+                            }
+                        }
+                        if (image.isNotBlank()) {
+                            IconButton(
+                                onClick = { image = "" },
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .align(Alignment.TopEnd)
+                                    .padding(4.dp, 4.dp, 2.dp, 2.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Cancel,
+                                    contentDescription = stringResource(R.string.delete_image_txt),
+                                )
+                            }
+
+                        }
                     }
                 }
             }
@@ -437,9 +518,7 @@ fun CreatePlaceScreen(
                     if(clickedPoint != null) {
                         val place = Place(
                             id = UUID.randomUUID().toString(),
-                            images = listOf(
-                                "https://validuspharma.com/wp-content/uploads/2019/06/nologo.png"
-                            ),
+                            images = if (image.isNotBlank()) listOf(image) else emptyList(),
                             description = description,
                             name = placeName,
                             scheduleList = schedules,
@@ -452,7 +531,6 @@ fun CreatePlaceScreen(
                             reports = emptyList(),
                             address = address,
                             location = Location(latitude = clickedPoint!!.latitude(), longitude = clickedPoint!!.longitude())
-
                         )
 
                         placeViewModel.addPlace(place)
@@ -468,4 +546,3 @@ fun CreatePlaceScreen(
 
     }
 }
-

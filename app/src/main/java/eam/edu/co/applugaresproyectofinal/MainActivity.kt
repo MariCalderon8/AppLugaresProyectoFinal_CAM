@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         )
         setContent {
             AppLugaresProyectoFinalTheme {
-                Navigation(mainViewModel = mainViewModel)
+                Navigation(mainViewModel)
             }
         }
     }

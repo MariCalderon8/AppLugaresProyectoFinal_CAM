@@ -3,6 +3,7 @@ package eam.edu.co.applugaresproyectofinal.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import eam.edu.co.applugaresproyectofinal.model.Role
 import eam.edu.co.applugaresproyectofinal.model.User
@@ -17,6 +18,7 @@ import java.util.UUID
 class UsersViewModel : ViewModel() {
 
     private val db = Firebase.firestore
+    private val auth = Firebase.auth
 
     private val _userResult = MutableStateFlow<RequestResult?>(null)
     val userResult: StateFlow<RequestResult?> = _userResult.asStateFlow()
@@ -52,30 +54,20 @@ class UsersViewModel : ViewModel() {
 
             _userResult.value = runCatching { loginFirebase(email, password) }
                 .fold(
-                    onSuccess = { user ->
-                        _currentUser.value = user
+                    onSuccess = {
                         RequestResult.Success("Login exitoso")
                     },
-                    onFailure = { e ->
-                        RequestResult.Failure(e.message ?: "Error en el login")
+                    onFailure = {
+                        RequestResult.Failure( "Datos de acceso incorrectos")
                     }
                 )
         }
     }
 
-    private suspend fun loginFirebase(email: String, password: String): User {
-        val snapshot = db.collection("users")
-            .whereEqualTo("email", email)
-            .whereEqualTo("password", password)
-            .get()
-            .await()
-
-        if (snapshot.documents.isEmpty()) {
-            throw Exception("Correo o contraseña incorrectos")
-        }
-
-        val doc = snapshot.documents.first()
-        return doc.toObject(User::class.java)!!.apply { id = doc.id }
+    private suspend fun loginFirebase(email: String, password: String){
+        val responseUser = auth.signInWithEmailAndPassword(email, password).await()
+        val userId = responseUser.user?.uid ?: throw Exception("usuario no encontrado login")
+        findUserById(userId)
     }
 
     fun addUser(user: User) {
@@ -91,9 +83,16 @@ class UsersViewModel : ViewModel() {
     }
 
     private suspend fun addUserFirebase(user: User) {
-        val id = UUID.randomUUID().toString()
-        user.id = id
-        db.collection("users").document(id).set(user).await()
+        val responseUser = auth.createUserWithEmailAndPassword(user.email, user.password).await()
+        val userId = responseUser.user?.uid?: ""
+
+        val userCopy = user.copy(id = userId, password = "")
+
+
+        db.collection("users")
+            .document(userId)
+            .set(userCopy)
+            .await()
     }
 
     fun updateUserFavoriteList(userId: String, newFavoritesList: List<String>) {
@@ -116,8 +115,8 @@ class UsersViewModel : ViewModel() {
     }
 
     fun logout() {
+        auth.signOut()
         _currentUser.value = null
-        _userResult.value = null
     }
 
     fun findUserById(userId: String) {

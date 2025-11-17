@@ -65,7 +65,8 @@ dependencies {
     implementation(libs.maps.android)
     implementation(libs.maps.compose)
     implementation(libs.firebase.firestore)
-    //implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
+    implementation(libs.firebase.auth)
+   implementation(libs.cloudinary.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
