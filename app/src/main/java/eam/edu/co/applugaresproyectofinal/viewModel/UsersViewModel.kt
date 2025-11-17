@@ -3,6 +3,7 @@ package eam.edu.co.applugaresproyectofinal.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import eam.edu.co.applugaresproyectofinal.model.Role
@@ -149,5 +150,18 @@ class UsersViewModel : ViewModel() {
             }
         }
     }
+
+    fun sendPasswordReset(email: String, onResult: (Boolean, String) -> Unit) {
+        FirebaseAuth.getInstance()
+            .sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    onResult(true, "Correo enviado correctamente")
+                } else {
+                    onResult(false, task.exception?.message ?: "Error desconocido")
+                }
+            }
+    }
+
 
 }

@@ -15,11 +15,4 @@ sealed class RouteScreen {
     @Serializable
     data object  RecoverPasswordEmail : RouteScreen()
 
-    @Serializable
-    data object  RecoverPasswordCode : RouteScreen()
-
-    @Serializable
-    data object  RecoverPasswordNewPassword : RouteScreen()
-
-
 }

@@ -1,6 +1,7 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.shared
 
 import android.util.Patterns
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
 import eam.edu.co.applugaresproyectofinal.R
+import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
 
 @Composable
 fun RecoverPasswordEmailScreen(
@@ -34,6 +37,9 @@ fun RecoverPasswordEmailScreen(
     onBack: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val usersViewModel = LocalMainViewModel.current.usersViewModel
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -73,7 +79,16 @@ fun RecoverPasswordEmailScreen(
         CustomButton(
             text = stringResource(R.string.btn_continue),
             isLarge = true,
-            onClick = { onContinue(email) }
+            onClick = {
+                if (email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    Toast.makeText(context, "Ingresa un correo válido", Toast.LENGTH_LONG).show()
+                    return@CustomButton
+                }
+                usersViewModel.sendPasswordReset(email) { success, msg ->
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
+                    if (success) onBack()
+                }
+            }
         )
     }
 }

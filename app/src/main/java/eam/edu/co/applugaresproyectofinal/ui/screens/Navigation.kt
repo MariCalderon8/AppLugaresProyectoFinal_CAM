@@ -17,8 +17,6 @@ import eam.edu.co.applugaresproyectofinal.ui.screens.admin.nav.HomeAdmin
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.AuthScreen
 import eam.edu.co.applugaresproyectofinal.ui.screens.user.HomeUser
 import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RecoverPasswordEmailScreen
-import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RecoverPasswordNewPasswordScreen
-import eam.edu.co.applugaresproyectofinal.ui.screens.shared.RecoverPasswordCodeScreen
 import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 import eam.edu.co.applugaresproyectofinal.viewModel.MainViewModel
 
@@ -92,27 +90,7 @@ fun Navigation(
                 composable<RouteScreen.RecoverPasswordEmail> {
                     RecoverPasswordEmailScreen(
                         onContinue = { email ->
-                            navController.navigate(RouteScreen.RecoverPasswordCode)
-                        },
-                        onBack = { navController.popBackStack() }
-                    )
-                }
-
-                composable<RouteScreen.RecoverPasswordCode> {
-                    RecoverPasswordCodeScreen(
-                        onContinue = { code ->
-                            navController.navigate(RouteScreen.RecoverPasswordNewPassword)
-                        },
-                        onBack = { navController.popBackStack() }
-                    )
-                }
-
-                composable<RouteScreen.RecoverPasswordNewPassword> {
-                    RecoverPasswordNewPasswordScreen(
-                        onChangePassword = { newPass, confirmPass ->
-                            navController.navigate(RouteScreen.Auth) {
-                                popUpTo(RouteScreen.Auth) { inclusive = true }
-                            }
+                            navController.navigate(RouteScreen.Auth)
                         },
                         onBack = { navController.popBackStack() }
                     )
