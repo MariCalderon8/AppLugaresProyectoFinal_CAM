@@ -71,8 +71,10 @@ fun Navigation(
                 composable<RouteScreen.HomeUser> {
                     HomeUser(
                         onLogout = {
-                            SharedPrefsUtil.clearPreferences(context)
-                            navController.navigate(RouteScreen.Auth)
+                            mainViewModel.usersViewModel.logout(context)
+                            navController.navigate(RouteScreen.Auth){
+                                popUpTo(0)
+                            }
                         }
                     )
                 }
@@ -80,10 +82,11 @@ fun Navigation(
                 composable<RouteScreen.HomeAdmin> {
                     HomeAdmin (
                         onLogout = {
-                            SharedPrefsUtil.clearPreferences(context)
-                            navController.navigate(RouteScreen.Auth)
+                            mainViewModel.usersViewModel.logout(context)
+                            navController.navigate(RouteScreen.Auth){
+                                popUpTo(0)
+                            }
                         },
-
                     )
                 }
 

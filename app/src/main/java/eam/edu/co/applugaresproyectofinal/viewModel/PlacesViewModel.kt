@@ -1,6 +1,7 @@
 package eam.edu.co.applugaresproyectofinal.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import eam.edu.co.applugaresproyectofinal.model.Category
@@ -15,13 +16,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import eam.edu.co.applugaresproyectofinal.model.dto.PlaceDTO
 import eam.edu.co.applugaresproyectofinal.model.dto.toPlace
+import eam.edu.co.applugaresproyectofinal.utils.RequestResult
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 
 class PlacesViewModel: ViewModel() {
 
-    val db = Firebase.firestore
+    private val db = Firebase.firestore
     private val _places = MutableStateFlow(emptyList<Place>())
     val places: StateFlow<List<Place>> = _places.asStateFlow()
+
+    private val _placeResult = MutableStateFlow<RequestResult?>(null)
+    val placeResult: StateFlow<RequestResult?> = _placeResult
 
     init {
         loadPlacesFromFirestore()
@@ -40,26 +47,68 @@ class PlacesViewModel: ViewModel() {
 
     // Crear lugar
     fun addPlace(place: Place) {
+        viewModelScope.launch {
+            _placeResult.value = RequestResult.Loading
+            try {
+                addPlaceFirebase(place)
+                _placeResult.value = RequestResult.Success("Lugar creado correctamente")
+            } catch (e: Exception) {
+                _placeResult.value =
+                    RequestResult.Failure(e.message ?: "Error creando el lugar")
+            }
+        }
+    }
+
+    private suspend fun addPlaceFirebase(place: Place) {
         val dto = place.toDTO()
         db.collection("places")
             .document(place.id)
             .set(dto)
+            .await()
     }
 
     // Editar lugar
     fun updatePlace(place: Place) {
+        viewModelScope.launch {
+            _placeResult.value = RequestResult.Loading
+            try {
+                updatePlaceFirebase(place)
+                _placeResult.value = RequestResult.Success("Lugar actualizado correctamente")
+            } catch (e: Exception) {
+                _placeResult.value =
+                    RequestResult.Failure(e.message ?: "Error actualizando el lugar")
+            }
+        }
+    }
+
+    private suspend fun updatePlaceFirebase(place: Place) {
         val dto = place.toDTO()
         db.collection("places")
             .document(place.id)
             .set(dto)
+            .await()
     }
 
 
     // Eliminar lugar
     fun deletePlace(id: String) {
+        viewModelScope.launch {
+            _placeResult.value = RequestResult.Loading
+            try {
+                deletePlaceFirebase(id)
+                _placeResult.value = RequestResult.Success("Lugar eliminado correctamente")
+            } catch (e: Exception) {
+                _placeResult.value =
+                    RequestResult.Failure(e.message ?: "Error eliminando lugar")
+            }
+        }
+    }
+
+    private suspend fun deletePlaceFirebase(id: String) {
         db.collection("places")
             .document(id)
             .delete()
+            .await()
     }
 
     // Buscar lugar por ID
@@ -89,23 +138,6 @@ class PlacesViewModel: ViewModel() {
         }
     }
 
-
-    // Buscar lugares por estado (Approved, Pending, etc.)
-    fun findPlacesByStatus(status: Status): List<Place> {
-        return _places.value.filter { it.status == status }
-    }
-
-
-    // Buscar lugares por id de usuario
-    fun findPlacesByUserId(userId: String): List<Place> {
-        return _places.value.filter { it.createdById == userId }
-    }
-
-    // Buscar lugares por id de usuario
-    fun findPlacesByUserModerator(userId: String): List<Place> {
-        return _places.value.filter { it.handledBy == userId }
-    }
-
     fun getPlacesCreatedByUser(userId: String): List<Place> {
         return _places.value.filter { it.createdById == userId }
     }
@@ -125,25 +157,13 @@ class PlacesViewModel: ViewModel() {
 
     fun addReview(placeId: String, review: Review) {
         val place = findPlaceById(placeId) ?: return
-
-        val updatedReviews = place.reviews + review
-        val updatedPlace = place.copy(reviews = updatedReviews)
-
-        updatePlace(updatedPlace)
+        updatePlace(place.copy(reviews = place.reviews + review))
     }
 
     fun addReport(placeId: String, report: Report) {
         val place = findPlaceById(placeId) ?: return
-
-        val newStatus =
-            if (place.status != Status.REPORTED) Status.REPORTED else place.status
-
-        val updatedPlace = place.copy(
-            reports = place.reports + report,
-            status = newStatus
-        )
-
-        updatePlace(updatedPlace)
+        val status = if (place.status != Status.REPORTED) Status.REPORTED else place.status
+        updatePlace(place.copy(reports = place.reports + report, status = status))
     }
 
     fun getPlaceRating(placeId: String): Double {
@@ -155,14 +175,7 @@ class PlacesViewModel: ViewModel() {
 
     fun moderatePlace(placeId: String, moderatorId: String, newStatus: Status) {
         val place = findPlaceById(placeId) ?: return
-        val updatedPlace = place.copy(status = newStatus, handledBy = moderatorId)
-        updatePlace(updatedPlace)
-    }
-
-    fun updatePlaceStatus(placeId: String, newStatus: Status) {
-        val place = findPlaceById(placeId) ?: return
-        val updatedPlace = place.copy(status = newStatus)
-        updatePlace(updatedPlace)
+        updatePlace(place.copy(status = newStatus, handledBy = moderatorId))
     }
 
     fun countReports(placeId: String): Int {

@@ -124,7 +124,9 @@ fun ProfileScreen(
         SignOutButton(
             icon = Icons.AutoMirrored.Filled.Logout,
             text = stringResource(R.string.btn_logout),
-            onClick = { onSignOutClick() }
+            onClick = {
+                onSignOutClick()
+            }
         )
 
     }

@@ -1,5 +1,6 @@
 package eam.edu.co.applugaresproyectofinal.viewModel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
@@ -9,12 +10,14 @@ import com.google.firebase.firestore.firestore
 import eam.edu.co.applugaresproyectofinal.model.Role
 import eam.edu.co.applugaresproyectofinal.model.User
 import eam.edu.co.applugaresproyectofinal.utils.RequestResult
+import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.UUID
+
 
 class UsersViewModel : ViewModel() {
 
@@ -115,9 +118,10 @@ class UsersViewModel : ViewModel() {
         _userResult.value = null
     }
 
-    fun logout() {
+    fun logout(context: Context) {
         auth.signOut()
         _currentUser.value = null
+        SharedPrefsUtil.clearPreferences(context)
     }
 
     fun findUserById(userId: String) {
