@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.Phone
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,10 +37,13 @@ import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Role
 import eam.edu.co.applugaresproyectofinal.model.User
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
+import eam.edu.co.applugaresproyectofinal.ui.components.CustomSnackbar
 import eam.edu.co.applugaresproyectofinal.ui.components.DropdownMenu
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
+import eam.edu.co.applugaresproyectofinal.ui.components.MessageType
 import eam.edu.co.applugaresproyectofinal.ui.components.OperationResultHandler
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
+import eam.edu.co.applugaresproyectofinal.utils.RequestResult
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.UUID
 
@@ -66,6 +70,9 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
     val validators = remember { mutableListOf<() -> Boolean>() }
 
     val userResult by usersViewModel.userResult.collectAsState()
+
+    var message by remember { mutableStateOf<Pair<String, MessageType>?>(null) }
+    var showMessage by remember { mutableStateOf(false) }
 
 
     Column(
@@ -173,7 +180,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                 password = it
             },
             onValidate = {
-                password.isBlank() || password.length < 5
+                password.isBlank() || password.length < 10
             },
             icon = Icons.Outlined.Lock,
             modifier = Modifier,
@@ -206,11 +213,8 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
                 }
 
                 if (hasErrors) {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.error_fill_all_fields),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    message = context.getString(R.string.msg_register_fill_fields) to MessageType.ERROR
+                    showMessage = true
                     return@CustomButton
                 }
 
@@ -231,25 +235,39 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit) {
             isLarge = true
         )
 
-        OperationResultHandler(
-            result = userResult,
-            onSuccess = {
-                onNavigateToLogin()
-                usersViewModel.resetOperationResult()
-            },
-            onFailure = {
-                usersViewModel.resetOperationResult()
-                Toast.makeText(
-                    context,
-                    "Error al crear el usuario",
-                    Toast.LENGTH_SHORT
-                ).show()
+        LaunchedEffect(userResult) {
+            when (userResult) {
+
+                is RequestResult.Success -> {
+                    message = context.getString(R.string.msg_register_success) to MessageType.SUCCESS
+                    showMessage = true
+                    usersViewModel.resetOperationResult()
+
+                    onNavigateToLogin()
+                }
+
+                is RequestResult.Failure -> {
+                    message = context.getString(R.string.msg_register_error) to MessageType.ERROR
+                    showMessage = true
+                    usersViewModel.resetOperationResult()
+                }
+
+                else -> Unit
             }
-        )
+        }
 
+        message?.let { (text, type) ->
+            CustomSnackbar(
+                message = text,
+                type = type,
+                visible = showMessage,
+                onDismiss = {
+                    showMessage = false
+                    message = null
+                }
+            )
+        }
         Spacer(modifier = Modifier.height(60.dp))
-
-
     }
 }
 

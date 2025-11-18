@@ -1,7 +1,6 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
 import android.util.Patterns
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,8 +47,10 @@ import eam.edu.co.applugaresproyectofinal.model.Role
 import eam.edu.co.applugaresproyectofinal.model.User
 import eam.edu.co.applugaresproyectofinal.ui.components.AlertDialogCustom
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
+import eam.edu.co.applugaresproyectofinal.ui.components.CustomSnackbar
 import eam.edu.co.applugaresproyectofinal.ui.components.DropdownMenu
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
+import eam.edu.co.applugaresproyectofinal.ui.components.MessageType
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
 import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 
@@ -86,6 +87,10 @@ fun UpdateProfileScreen(
         var country by remember { mutableStateOf("") }
 
         val validators = remember { mutableListOf<() -> Boolean>() }
+
+        var message by remember { mutableStateOf<Pair<String, MessageType>?>(null) }
+        var showMessage by remember { mutableStateOf(false) }
+
 
         BackHandler(enabled = true) {
             showDialog = true
@@ -189,16 +194,6 @@ fun UpdateProfileScreen(
             registerValidator = { validator -> validators.add(validator) }
         )
 
-//        DropdownMenu(
-//            label = stringResource(R.string.label_register_country),
-//            list = countries,
-//            onValueChange = {
-//                country = it
-//            },
-//            icon = Icons.Outlined.Home,
-//            supportingText = stringResource(R.string.error_country),
-//            initialValue = user?.country ?: ""
-//        )
 
         DropdownMenu(
             label = stringResource(R.string.label_register_city),
@@ -235,11 +230,8 @@ fun UpdateProfileScreen(
                 }
 
                 if (hasErrors) {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.error_fill_all_fields),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    message = context.getString(R.string.error_fill_all_fields) to MessageType.ERROR
+                    showMessage = true
                     return@CustomButton
                 }
                 val updatedUser = User(
@@ -253,16 +245,29 @@ fun UpdateProfileScreen(
                     lastName = lastname,
                     profilePicture = currentUser?.profilePicture,
                     role = currentUser?.role ?: Role.USER,
-//                    country = if (country.isBlank()) user?.country ?: "" else country,
                     country = "Colombia"
                 )
                 usersViewModel.updateUser(updatedUser)
+                message = context.getString(R.string.msg_profile_updated) to MessageType.SUCCESS
+                showMessage = true
                 onNavitageToProfile()
             },
             isLarge = true
         )
 
         Spacer(modifier = Modifier.height(20.dp))
+        message?.let { (text, type) ->
+            CustomSnackbar(
+                message = text,
+                type = type,
+                visible = showMessage,
+                onDismiss = {
+                    showMessage = false
+                    message = null
+                }
+            )
+        }
+
     }
 
 }

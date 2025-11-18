@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.sp
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
 import eam.edu.co.applugaresproyectofinal.R
+import eam.edu.co.applugaresproyectofinal.ui.components.CustomSnackbar
+import eam.edu.co.applugaresproyectofinal.ui.components.MessageType
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
 
 @Composable
@@ -37,6 +39,9 @@ fun RecoverPasswordEmailScreen(
     onBack: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
+
+    var message by remember { mutableStateOf<Pair<String, MessageType>?>(null) }
+    var showMessage by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
     val usersViewModel = LocalMainViewModel.current.usersViewModel
@@ -81,14 +86,34 @@ fun RecoverPasswordEmailScreen(
             isLarge = true,
             onClick = {
                 if (email.isBlank() || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    Toast.makeText(context, "Ingresa un correo válido", Toast.LENGTH_LONG).show()
+                    message = context.getString(R.string.msg_recover_invalid_email) to MessageType.ERROR
+                    showMessage = true
                     return@CustomButton
                 }
                 usersViewModel.sendPasswordReset(email) { success, msg ->
-                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
-                    if (success) onBack()
+
+                    if (success) {
+                        message = context.getString(R.string.msg_recover_email_sent) to MessageType.SUCCESS
+                        showMessage = true
+                        onBack()
+                    } else {
+                        message = context.getString(R.string.msg_recover_email_error) to MessageType.ERROR
+                        showMessage = true
+                    }
                 }
+
             }
         )
+        message?.let { (text, type) ->
+            CustomSnackbar(
+                message = text,
+                type = type,
+                visible = showMessage,
+                onDismiss = {
+                    showMessage = false
+                    message = null
+                }
+            )
+        }
     }
 }

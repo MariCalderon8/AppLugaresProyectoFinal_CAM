@@ -51,6 +51,8 @@ import eam.edu.co.applugaresproyectofinal.model.Role
 import eam.edu.co.applugaresproyectofinal.ui.components.AlertDialogCustom
 import eam.edu.co.applugaresproyectofinal.ui.components.CheckBox
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
+import eam.edu.co.applugaresproyectofinal.ui.components.CustomSnackbar
+import eam.edu.co.applugaresproyectofinal.ui.components.MessageType
 import eam.edu.co.applugaresproyectofinal.ui.components.OperationResultHandler
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
 import eam.edu.co.applugaresproyectofinal.utils.RequestResult
@@ -69,6 +71,7 @@ fun LoginScreen(
     var isChecked by remember { mutableStateOf(false) }
 
     val userResult by usersViewModel.userResult.collectAsState()
+    var message by remember { mutableStateOf<Pair<String, MessageType>?>(null) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -104,7 +107,7 @@ fun LoginScreen(
                     password = it
                 },
                 onValidate = {
-                    password.isBlank() || password.length < 5
+                    password.isBlank() || password.length < 10
                 },
                 icon = Icons.Outlined.Lock
             )
@@ -146,16 +149,33 @@ fun LoginScreen(
             )
 
             LaunchedEffect(userResult) {
-                if (userResult is RequestResult.Success) {
-                    val user = usersViewModel.currentUser.value
-                    if (user != null) {
-                        onNavigateToHome(user.id, user.role)
+                when (userResult) {
+                    is RequestResult.Success -> {
+                        val user = usersViewModel.currentUser.value
+                        if (user != null) {
+                            message =
+                                context.getString(R.string.msg_login_success) to MessageType.SUCCESS
+                            onNavigateToHome(user.id, user.role)
+                        }
+                        usersViewModel.resetOperationResult()
                     }
-                    usersViewModel.resetOperationResult()
+
+                    is RequestResult.Failure -> {
+                        message = context.getString(R.string.msg_login_error) to MessageType.ERROR
+                    }
+
+                    else -> Unit
                 }
             }
 
-
+            message?.let { (text, type) ->
+                CustomSnackbar(
+                    message = text,
+                    type = type,
+                    visible = true,
+                    onDismiss = { message = null }
+                )
+            }
         }
 
     )

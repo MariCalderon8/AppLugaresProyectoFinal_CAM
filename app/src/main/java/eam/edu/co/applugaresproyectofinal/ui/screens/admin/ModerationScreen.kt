@@ -45,6 +45,8 @@ import androidx.compose.ui.unit.sp
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Status
 import eam.edu.co.applugaresproyectofinal.model.getColor
+import eam.edu.co.applugaresproyectofinal.ui.components.CustomSnackbar
+import eam.edu.co.applugaresproyectofinal.ui.components.MessageType
 import eam.edu.co.applugaresproyectofinal.ui.components.PlaceCard
 import eam.edu.co.applugaresproyectofinal.ui.components.TagChip
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
@@ -70,7 +72,11 @@ fun ModerationScreen(
 
     val places by placesViewModel.places.collectAsState()
 
-    val filteredPlaces by remember(places, selectedStatus, searchQuery) { mutableStateOf(placesViewModel.filterPlaces(selectedStatus, searchQuery)) }
+    val filteredPlaces by remember(places, selectedStatus, searchQuery) {
+        mutableStateOf(
+            placesViewModel.filterPlaces(selectedStatus, searchQuery)
+        )
+    }
 
     val statuses = listOf(
         null,
@@ -80,6 +86,8 @@ fun ModerationScreen(
         Status.REPORTED
     )
 
+    var message by remember { mutableStateOf<Pair<String, MessageType>?>(null) }
+    var showMessage by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -232,7 +240,7 @@ fun ModerationScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 items(filteredPlaces) { place ->
-                    if (place.status == Status.PENDING_FOR_APPROVAL){
+                    if (place.status == Status.PENDING_FOR_APPROVAL) {
                         PlaceCard(
                             title = place.name,
                             category = place.category.displayName,
@@ -240,7 +248,10 @@ fun ModerationScreen(
                             createdBy = usersViewModel.users.value
                                 .find { it.id == place.createdById }
                                 ?.completeName ?: "Desconocido",
-                            date = formatSchedules(context = LocalContext.current, place.scheduleList),
+                            date = formatSchedules(
+                                context = LocalContext.current,
+                                place.scheduleList
+                            ),
                             imageUrl = place.images[0],
                             onCardClick = {
                                 onNavigateToPlaceDetail(place.id)
@@ -254,19 +265,31 @@ fun ModerationScreen(
                             iconContentPadding = 4,
                             showActions = true,
                             onCancelClick = {
-                                placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.REJECTED)
-                                Toast.makeText(context, "Lugar rechazado", Toast.LENGTH_SHORT).show()
+                                placesViewModel.moderatePlace(
+                                    place.id,
+                                    currentUser?.id ?: "",
+                                    Status.REJECTED
+                                )
+                                message =
+                                    context.getString(R.string.msg_place_rejected) to MessageType.ERROR
+                                showMessage = true
                             },
                             onConfirmClick = {
-                                placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.APPROVED)
-                                Toast.makeText(context, "Lugar aprobado", Toast.LENGTH_SHORT).show()
+                                placesViewModel.moderatePlace(
+                                    place.id,
+                                    currentUser?.id ?: "",
+                                    Status.APPROVED
+                                )
+                                message =
+                                    context.getString(R.string.msg_place_approved) to MessageType.SUCCESS
+                                showMessage = true
                             },
                             labelConfirmBtn = stringResource(R.string.btn_moderator_approve),
                             confirmBtnColor = colorResource(R.color.primary),
                             labelCancelBtn = stringResource(R.string.btn_moderator_reject),
                             cancelBtnColor = Color.White
                         )
-                    } else if (place.status == Status.REPORTED){
+                    } else if (place.status == Status.REPORTED) {
                         PlaceCard(
                             title = place.name,
                             category = place.category.displayName,
@@ -274,7 +297,10 @@ fun ModerationScreen(
                             createdBy = usersViewModel.users.value
                                 .find { it.id == place.createdById }
                                 ?.completeName ?: "Desconocido",
-                            date = formatSchedules(context = LocalContext.current, place.scheduleList),
+                            date = formatSchedules(
+                                context = LocalContext.current,
+                                place.scheduleList
+                            ),
                             imageUrl = place.images[0],
                             onCardClick = {
                                 onNavigateToPlaceDetail(place.id)
@@ -288,13 +314,25 @@ fun ModerationScreen(
                             iconContentPadding = 4,
                             showActions = true,
                             onCancelClick = {
-                                placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.APPROVED)
-                                Toast.makeText(context, "Reporte ignorado, el lugar pasará a aprobado", Toast.LENGTH_SHORT).show()
+                                placesViewModel.moderatePlace(
+                                    place.id,
+                                    currentUser?.id ?: "",
+                                    Status.APPROVED
+                                )
+                                message =
+                                    context.getString(R.string.msg_report_ignored) to MessageType.INFO
+                                showMessage = true
+
                             },
                             onConfirmClick = {
-                                placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.REJECTED)
-                                Toast.makeText(context, "Lugar rechazado", Toast.LENGTH_SHORT).show()
-
+                                placesViewModel.moderatePlace(
+                                    place.id,
+                                    currentUser?.id ?: "",
+                                    Status.REJECTED
+                                )
+                                message =
+                                    context.getString(R.string.msg_place_rejected) to MessageType.ERROR
+                                showMessage = true
                             },
                             labelCancelBtn = stringResource(R.string.label_ignore_report),
                             labelConfirmBtn = stringResource(R.string.label_reject_place),
@@ -308,7 +346,10 @@ fun ModerationScreen(
                             createdBy = usersViewModel.users.value
                                 .find { it.id == place.createdById }
                                 ?.completeName ?: "Desconocido",
-                            date = formatSchedules(context = LocalContext.current, place.scheduleList),
+                            date = formatSchedules(
+                                context = LocalContext.current,
+                                place.scheduleList
+                            ),
                             imageUrl = place.images[0],
                             onCardClick = {
                                 onNavigateToPlaceDetail(place.id)
@@ -323,8 +364,21 @@ fun ModerationScreen(
                         )
                     }
                 }
+
             }
         }
+        message?.let { (text, type) ->
+            CustomSnackbar(
+                message = text,
+                type = type,
+                visible = showMessage,
+                onDismiss = {
+                    showMessage = false
+                    message = null
+                }
+            )
+        }
+
     }
 }
 

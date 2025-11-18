@@ -29,6 +29,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +47,8 @@ import eam.edu.co.applugaresproyectofinal.model.Status
 import eam.edu.co.applugaresproyectofinal.model.getColor
 import eam.edu.co.applugaresproyectofinal.ui.components.CommentItem
 import eam.edu.co.applugaresproyectofinal.ui.components.CreatorInfoCard
+import eam.edu.co.applugaresproyectofinal.ui.components.CustomSnackbar
+import eam.edu.co.applugaresproyectofinal.ui.components.MessageType
 import eam.edu.co.applugaresproyectofinal.ui.components.PlaceInfoRow
 import eam.edu.co.applugaresproyectofinal.ui.components.RatingBar
 import eam.edu.co.applugaresproyectofinal.ui.components.ReportCard
@@ -76,6 +81,9 @@ fun PlaceDetailAdminScreen(
     val userId = SharedPrefsUtil.getPreferences(context)["userId"] ?: return
     usersViewModel.findUserById(userId)
     val currentUser by usersViewModel.currentUser.collectAsState()
+
+    var message by remember { mutableStateOf<Pair<String, MessageType>?>(null) }
+    var showMessage by remember { mutableStateOf(false) }
 
 
     Column(
@@ -229,7 +237,8 @@ fun PlaceDetailAdminScreen(
                 Button(
                     onClick = {
                         placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.REJECTED)
-                        Toast.makeText(context, "Lugar rechazado", Toast.LENGTH_SHORT).show()
+                        message = context.getString(R.string.msg_place_rejected) to MessageType.ERROR
+                        showMessage = true
                         onBack()
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -247,7 +256,9 @@ fun PlaceDetailAdminScreen(
                 Button(
                     onClick = {
                         placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.APPROVED)
-                        Toast.makeText(context, "Reporte ignorado, el lugar pasará a aprobado", Toast.LENGTH_SHORT).show()
+                        message = context.getString(R.string.msg_report_ignored) to MessageType.INFO
+                        showMessage = true
+
                         onBack
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -277,7 +288,8 @@ fun PlaceDetailAdminScreen(
                 Button(
                     onClick = {
                         placesViewModel.moderatePlace(place.id, currentUser?.id ?: "", Status.APPROVED)
-                        Toast.makeText(context, "Lugar aprobado", Toast.LENGTH_SHORT).show()
+                        message = context.getString(R.string.msg_place_approved) to MessageType.SUCCESS
+                        showMessage = true
                         onBack()
                     },
                     colors = ButtonDefaults.buttonColors(
@@ -312,5 +324,17 @@ fun PlaceDetailAdminScreen(
                 }
             }
         }
+        message?.let { (text, type) ->
+            CustomSnackbar(
+                message = text,
+                type = type,
+                visible = showMessage,
+                onDismiss = {
+                    showMessage = false
+                    message = null
+                }
+            )
+        }
+
     }
 }

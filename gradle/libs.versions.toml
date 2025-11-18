@@ -21,6 +21,7 @@ googleGmsGoogleServices = "4.4.4"
 firebaseFirestore = "26.0.2"
 firebaseAuth = "24.0.1"
 cloudinary = "3.0.2"
+runtime = "1.9.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,6 +51,7 @@ maps-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "ma
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 cloudinary-android = {group = "com.cloudinary", name = "cloudinary-android", version.ref = "cloudinary"}
+androidx-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

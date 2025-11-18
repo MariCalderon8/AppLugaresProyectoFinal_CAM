@@ -67,6 +67,9 @@ fun PlaceDetailScreen(
 
     val isCreator = currentUser?.id == place.createdById
 
+    var message by remember { mutableStateOf<Pair<String, MessageType>?>(null) }
+    var showMessage by remember { mutableStateOf(false) }
+
     BackHandler(enabled = replyToReview != null) {
         replyToReview = null
     }
@@ -171,10 +174,13 @@ fun PlaceDetailScreen(
                                 onClick = {
                                     if (isFavorite) {
                                         toggleFavorite(currentUser!!.id, place.id)
+                                        message = context.getString(R.string.msg_removed_from_favorites) to MessageType.INFO
                                     } else {
                                         toggleFavorite(currentUser!!.id, place.id)
+                                        message = context.getString(R.string.msg_added_to_favorites) to MessageType.SUCCESS
                                     }
                                     isFavorite = currentUser!!.favorites.contains(place.id)
+                                    showMessage = true
                                 }
                             ) {
                                 Icon(
@@ -282,7 +288,6 @@ fun PlaceDetailScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            val toastMsg = stringResource(R.string.label_review_already_replied)
             val replyBackgroundColor = colorResource(R.color.gray_more_light)
 
             place.reviews.forEach { review ->
@@ -298,11 +303,8 @@ fun PlaceDetailScreen(
                         if (review.creatorReply.isNullOrBlank()) {
                             replyToReview = review.id
                         } else {
-                            Toast.makeText(
-                                context,
-                                toastMsg,
-                                Toast.LENGTH_SHORT)
-                                .show()
+                            message = context.getString(R.string.msg_already_replied) to MessageType.ERROR
+                            showMessage = true
                         }
                     }
                 )
@@ -346,7 +348,18 @@ fun PlaceDetailScreen(
             }
 
             Spacer(Modifier.height(20.dp))
-        }
 
+            message?.let { (text, type) ->
+                CustomSnackbar(
+                    message = text,
+                    type = type,
+                    visible = showMessage,
+                    onDismiss = {
+                        showMessage = false
+                        message = null
+                    }
+                )
+            }
+        }
     }
 }

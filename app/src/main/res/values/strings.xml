@@ -17,7 +17,7 @@
     <string name="link_login_forgot_password">¿Has olvidado tu contraseña?</string>
 
     <string name="error_email">Email no válido</string>
-    <string name="error_password">Contraseña no puede ser menor a 5 caracteres</string>
+    <string name="error_password">Contraseña no puede ser menor a 10 caracteres</string>
 
     <string name="usermsg_welcome">Bienvenido</string>
     <string name="usermsg_not_valid_credentials">Correo o contraseña no válidos</string>
@@ -207,5 +207,38 @@
     <!-- FAVORITES -->
     <string name="label_no_favorites">No tienes lugares favoritos guardados</string>
     <string name="label_no_favorites_description">Explora y encuentra tu próximo lugar favorito</string>
+
+    <string name="msg_login_success">Inicio de sesión exitoso</string>
+    <string name="msg_login_error">Usuario o contraseña incorrectos</string>
+
+    <string name="msg_register_success">Registro exitoso</string>
+    <string name="msg_register_error">Error al crear el usuario</string>
+    <string name="msg_register_fill_fields">Debes completar todos los campos</string>
+
+
+    <string name="msg_place_created">Negocio creado exitosamente</string>
+    <string name="msg_place_missing_fields">Completa todos los campos obligatorios</string>
+    <string name="msg_place_missing_location">Selecciona la ubicación en el mapa</string>
+    <string name="msg_place_upload_error">Error al subir la imagen</string>
+    <string name="msg_place_no_image">Debes subir al menos una imagen</string>
+
+
+    <string name="msg_profile_updated">Perfil actualizado correctamente</string>
+    <string name="msg_profile_update_error">No se pudo actualizar el perfil</string>
+    <string name="msg_profile_no_changes">No se detectaron cambios para actualizar</string>
+
+    <string name="msg_place_approved">Lugar aprobado</string>
+    <string name="msg_place_rejected">Lugar rechazado</string>
+    <string name="msg_report_ignored">Reporte ignorado, el lugar pasará a aprobado</string>
+
+    <string name="msg_recover_invalid_email">Ingresa un correo válido</string>
+    <string name="msg_recover_email_sent">Se ha enviado un correo para restablecer tu contraseña</string>
+    <string name="msg_recover_email_error">No se pudo enviar el correo de recuperación</string>
+
+    <string name="msg_added_to_favorites">Añadido a favoritos</string>
+    <string name="msg_removed_from_favorites">Eliminado de favoritos</string>
+    <string name="msg_already_replied">Este comentario ya tiene una respuesta</string>
+
+
 
 </resources>

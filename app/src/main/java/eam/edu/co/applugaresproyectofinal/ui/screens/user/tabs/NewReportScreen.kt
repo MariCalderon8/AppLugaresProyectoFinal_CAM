@@ -1,6 +1,5 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -19,7 +18,9 @@ import androidx.compose.ui.unit.dp
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Report
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
+import eam.edu.co.applugaresproyectofinal.ui.components.CustomSnackbar
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
+import eam.edu.co.applugaresproyectofinal.ui.components.MessageType
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
 import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 import java.util.UUID
@@ -43,6 +44,9 @@ fun NewReportScreen(
     var description by remember { mutableStateOf("") }
 
     val validators = remember { mutableListOf<() -> Boolean>() }
+
+    var message by remember { mutableStateOf<Pair<String, MessageType>?>(null) }
+    var showMessage by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -125,19 +129,10 @@ fun NewReportScreen(
                     }
 
                     if (hasErrors) {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.error_fill_all_fields),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        message=context.getString(R.string.error_fill_all_fields) to MessageType.ERROR
+                        showMessage = true
                         return@CustomButton
                     }
-
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.label_success_report_sent),
-                        Toast.LENGTH_SHORT
-                    ).show()
 
                     placesViewModel.addReport(placeId, Report(
                         id = UUID.randomUUID().toString(),
@@ -146,11 +141,23 @@ fun NewReportScreen(
                         userId = currentUser!!.id
                     ))
 
+                    message = context.getString(R.string.label_success_report_sent) to MessageType.SUCCESS
                     onBack()
                 },
                 isLarge = true,
                 modifier = Modifier.fillMaxWidth()
             )
+            message?.let { (text, type) ->
+                CustomSnackbar(
+                    message = text,
+                    type = type,
+                    visible = showMessage,
+                    onDismiss = {
+                        showMessage = false
+                        message = null
+                    }
+                )
+            }
         }
     }
 }

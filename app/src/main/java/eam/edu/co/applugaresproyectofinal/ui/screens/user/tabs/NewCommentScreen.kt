@@ -19,7 +19,9 @@ import androidx.compose.ui.unit.dp
 import eam.edu.co.applugaresproyectofinal.R
 import eam.edu.co.applugaresproyectofinal.model.Review
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomButton
+import eam.edu.co.applugaresproyectofinal.ui.components.CustomSnackbar
 import eam.edu.co.applugaresproyectofinal.ui.components.InputText
+import eam.edu.co.applugaresproyectofinal.ui.components.MessageType
 import eam.edu.co.applugaresproyectofinal.ui.screens.LocalMainViewModel
 import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 import java.util.UUID
@@ -46,6 +48,8 @@ fun NewCommentScreen(
     var ratingError by remember { mutableStateOf(false) }
     val validators = remember { mutableListOf<() -> Boolean>() }
 
+    var message by remember { mutableStateOf<Pair<String, MessageType>?>(null) }
+    var showMessage by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -147,19 +151,11 @@ fun NewCommentScreen(
                     if (ratingError) hasErrors = true
 
                     if (hasErrors) {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.error_fill_all_fields),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        message = context.getString(R.string.error_fill_all_fields) to MessageType.ERROR
+                        showMessage = true
                         return@CustomButton
                     }
 
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.label_success_review_sent),
-                        Toast.LENGTH_SHORT
-                    ).show()
                     val review = Review(
                         id = UUID.randomUUID().toString(),
                         subject = subject,
@@ -168,6 +164,10 @@ fun NewCommentScreen(
                         userId = currentUser!!.id
                     )
                     placesViewModel.addReview(placeId, review)
+
+                    message = context.getString(R.string.label_success_review_sent) to MessageType.SUCCESS
+                    showMessage = true
+
                     onBack()
                 },
                 isLarge = true,
@@ -175,6 +175,18 @@ fun NewCommentScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp)
             )
+
+            message?.let { (text, type) ->
+                CustomSnackbar(
+                    message = text,
+                    type = type,
+                    visible = showMessage,
+                    onDismiss = {
+                        showMessage = false
+                        message = null
+                    }
+                )
+            }
         }
     }
 }

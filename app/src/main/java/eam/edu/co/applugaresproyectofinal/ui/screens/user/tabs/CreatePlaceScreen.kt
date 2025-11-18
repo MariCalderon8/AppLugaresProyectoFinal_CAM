@@ -87,6 +87,8 @@ import eam.edu.co.applugaresproyectofinal.utils.SharedPrefsUtil
 import java.util.UUID
 import com.cloudinary.Cloudinary
 import com.cloudinary.utils.ObjectUtils
+import eam.edu.co.applugaresproyectofinal.ui.components.CustomSnackbar
+import eam.edu.co.applugaresproyectofinal.ui.components.MessageType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -125,6 +127,10 @@ fun CreatePlaceScreen(
     var clickedPoint by rememberSaveable { mutableStateOf<Point?>(null) }
 
     var image by remember { mutableStateOf("")}
+
+    var message by remember { mutableStateOf<Pair<String, MessageType>?>(null) }
+    var showMessage by remember { mutableStateOf(false) }
+
 
     val config = mapOf(
         "cloud_name" to "dagstejp0",
@@ -507,11 +513,8 @@ fun CreatePlaceScreen(
                     if (categoryError || scheduleError) hasErrors = true
 
                     if (hasErrors) {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.error_fill_all_fields),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        message = context.getString(R.string.msg_place_missing_fields) to MessageType.ERROR
+                        showMessage = true
                         return@CustomButton
                     }
 
@@ -534,15 +537,29 @@ fun CreatePlaceScreen(
                         )
 
                         placeViewModel.addPlace(place)
+
+                        message = context.getString(R.string.msg_place_created) to MessageType.SUCCESS
+                        showMessage = true
+
                         onNavigateToMyPlaces()
                     }else{
-//                        Mostrar alerta de que falta la ubicación
+                        message = context.getString(R.string.msg_place_missing_location) to MessageType.ERROR
+                        showMessage = true
                     }
                 },
                 isLarge = true
             )
-
+            message?.let { (text, type) ->
+                CustomSnackbar(
+                    message = text,
+                    type = type,
+                    visible = showMessage,
+                    onDismiss = {
+                        showMessage = false
+                        message = null
+                    }
+                )
+            }
         }
-
     }
 }

@@ -1,7 +1,6 @@
 package eam.edu.co.applugaresproyectofinal.ui.screens.user.tabs
 
 import android.content.pm.PackageManager
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
