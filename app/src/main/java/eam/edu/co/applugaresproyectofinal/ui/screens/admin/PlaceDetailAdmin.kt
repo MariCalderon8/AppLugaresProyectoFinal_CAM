@@ -48,6 +48,7 @@ import eam.edu.co.applugaresproyectofinal.model.getColor
 import eam.edu.co.applugaresproyectofinal.ui.components.CommentItem
 import eam.edu.co.applugaresproyectofinal.ui.components.CreatorInfoCard
 import eam.edu.co.applugaresproyectofinal.ui.components.CustomSnackbar
+import eam.edu.co.applugaresproyectofinal.ui.components.Map
 import eam.edu.co.applugaresproyectofinal.ui.components.MessageType
 import eam.edu.co.applugaresproyectofinal.ui.components.PlaceInfoRow
 import eam.edu.co.applugaresproyectofinal.ui.components.RatingBar
@@ -172,14 +173,19 @@ fun PlaceDetailAdminScreen(
 
         Spacer(Modifier.height(12.dp))
 
-        Image(
-            painter = painterResource(id = R.drawable.map),
-            contentDescription = stringResource(R.string.label_place_location),
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(250.dp)
                 .clip(RoundedCornerShape(12.dp))
-        )
+        ){
+            Map(
+                places = listOf(place),
+                activateClick = false,
+                followUserLocation = false,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
 
         Spacer(Modifier.height(16.dp))
 
